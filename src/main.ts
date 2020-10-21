@@ -3,7 +3,7 @@
 /* eslint-disable no-console */
 const github = require('@actions/github')
 const core = require('@actions/core')
-import {execSync} from 'child_process'
+const execSync = require('@actions/core').execSync
 // import fs from 'fs'
 
 async function main(): Promise<void> {
