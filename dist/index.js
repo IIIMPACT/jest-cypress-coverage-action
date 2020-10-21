@@ -310,8 +310,8 @@ function main() {
             console.log('fullCoverage : ', fullCoverage);
             const commandToRun = core.getInput('runCommand');
             console.log('commandToRun: ', commandToRun);
-            const githubClient = github.getOctokit(githubToken);
-            console.log('githubClient: ', githubClient);
+            // const githubClient = github.getOctokit(githubToken)
+            // console.log('githubClient: ', githubClient)
             const prNumber = github.context.issue.number;
             console.log('prNumber: ', prNumber);
             const branchNameBase = (_a = github.context.payload.pull_request) === null || _a === void 0 ? void 0 : _a.base.ref;
