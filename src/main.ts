@@ -13,7 +13,7 @@ async function main(): Promise<void> {
     console.log('core: ', core)
     console.log('github: ', github)
     const nameToGreet = core.getInput('who-to-greet')
-    console.log(`Hello iwe ndiwe ani ko iwe ${nameToGreet}!`)
+    console.log(`Hello iwe ndiwe ani ko iwe nhai ${nameToGreet}!`)
     const time = new Date().toTimeString()
     core.setOutput('time', time)
     // Get the JSON webhook payload for the event that triggered the workflow
