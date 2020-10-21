@@ -285,22 +285,31 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 /* eslint-disable no-console */
 const github = __webpack_require__(469);
 const core = __webpack_require__(470);
-// import {execSync} from 'child_process'
+const execSync = __webpack_require__(470).execSync;
 // import fs from 'fs'
 function main() {
+    var _a, _b;
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            //start
-            // `who-to-greet` input defined in action metadata file
-            console.log('core: ', core);
-            console.log('github: ', github);
-            const nameToGreet = core.getInput('who-to-greet');
-            console.log(`Hello iwe ndiwe ani ko iwe nhai ${nameToGreet}!`);
-            const time = new Date().toTimeString();
-            core.setOutput('time', time);
-            // Get the JSON webhook payload for the event that triggered the workflow
-            const payload = JSON.stringify(github.context.payload, undefined, 2);
-            console.log(`The event payload yachinja here: ${payload}`);
+            const repoName = github.context.repo.repo;
+            console.log('repoName: ', repoName);
+            const repoOwner = github.context.repo.owner;
+            console.log('repoOwner : ', repoOwner);
+            // const githubToken = core.getInput('accessToken')
+            // const fullCoverage = JSON.parse(core.getInput('fullCoverageDiff'))
+            // const commandToRun = core.getInput('runCommand')
+            // const githubClient = github.getOctokit(githubToken)
+            // console.log('githubClient: ', githubClient);
+            const prNumber = github.context.issue.number;
+            console.log('prNumber: ', prNumber);
+            const branchNameBase = (_a = github.context.payload.pull_request) === null || _a === void 0 ? void 0 : _a.base.ref;
+            console.log('branchNameBase: ', branchNameBase);
+            const branchNameHead = (_b = github.context.payload.pull_request) === null || _b === void 0 ? void 0 : _b.head.ref;
+            console.log('branchNameHead: ', branchNameHead);
+            execSync('echo "it can run stuff"');
+            // const codeCoverageNew = <CoverageReport>(
+            //   JSON.parse(fs.readFileSync('coverage-summary.json').toString())
+            // )
         }
         catch (error) {
             core.setFailed(error.message);
