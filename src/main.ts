@@ -8,6 +8,7 @@ async function main(): Promise<void> {
   try {
     //start
     // `who-to-greet` input defined in action metadata file
+    console.log('core: ', core)
     const nameToGreet = core.getInput('who-to-greet')
     console.log(`Hello iwe ndiwe ani ko iwe ${nameToGreet}!`)
     const time = new Date().toTimeString()
