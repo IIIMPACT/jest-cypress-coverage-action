@@ -266,6 +266,13 @@ exports.getApiBaseUrl = getApiBaseUrl;
 
 /***/ }),
 
+/***/ 129:
+/***/ (function(module) {
+
+module.exports = require("child_process");
+
+/***/ }),
+
 /***/ 131:
 /***/ (function(__unusedmodule, __unusedexports, __webpack_require__) {
 
@@ -285,21 +292,26 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 /* eslint-disable no-console */
 const github = __webpack_require__(469);
 const core = __webpack_require__(470);
-const execSync = __webpack_require__(470).execSync;
+const execSync = __webpack_require__(129);
 // import fs from 'fs'
 function main() {
     var _a, _b;
     return __awaiter(this, void 0, void 0, function* () {
         try {
+            console.log('execSync: ', execSync);
+            console.log('execSync.execSync: ', execSync.execSync);
+            console.log('typeof execSync.execSync: ', typeof execSync.execSync);
             const repoName = github.context.repo.repo;
             console.log('repoName: ', repoName);
             const repoOwner = github.context.repo.owner;
             console.log('repoOwner : ', repoOwner);
-            // const githubToken = core.getInput('accessToken')
-            // const fullCoverage = JSON.parse(core.getInput('fullCoverageDiff'))
-            // const commandToRun = core.getInput('runCommand')
-            // const githubClient = github.getOctokit(githubToken)
-            // console.log('githubClient: ', githubClient);
+            const githubToken = core.getInput('accessToken');
+            const fullCoverage = JSON.parse(core.getInput('fullCoverageDiff'));
+            console.log('fullCoverage : ', fullCoverage);
+            const commandToRun = core.getInput('runCommand');
+            console.log('commandToRun: ', commandToRun);
+            const githubClient = github.getOctokit(githubToken);
+            console.log('githubClient: ', githubClient);
             const prNumber = github.context.issue.number;
             console.log('prNumber: ', prNumber);
             const branchNameBase = (_a = github.context.payload.pull_request) === null || _a === void 0 ? void 0 : _a.base.ref;
