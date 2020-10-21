@@ -267,7 +267,7 @@ exports.getApiBaseUrl = getApiBaseUrl;
 /***/ }),
 
 /***/ 131:
-/***/ (function(__unusedmodule, exports, __webpack_require__) {
+/***/ (function(__unusedmodule, __unusedexports, __webpack_require__) {
 
 "use strict";
 
@@ -280,13 +280,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
+/* eslint-disable @typescript-eslint/no-var-requires */
+/* eslint-disable @typescript-eslint/no-require-imports */
 /* eslint-disable no-console */
-const core_1 = __importDefault(__webpack_require__(470));
-const github_1 = __importDefault(__webpack_require__(469));
+const github = __webpack_require__(469);
+const core = __webpack_require__(470);
 // import {execSync} from 'child_process'
 // import fs from 'fs'
 function main() {
@@ -294,18 +292,18 @@ function main() {
         try {
             //start
             // `who-to-greet` input defined in action metadata file
-            console.log('core: ', core_1.default);
-            console.log('github: ', github_1.default);
-            const nameToGreet = core_1.default.getInput('who-to-greet');
+            console.log('core: ', core);
+            console.log('github: ', github);
+            const nameToGreet = core.getInput('who-to-greet');
             console.log(`Hello iwe ndiwe ani ko iwe ${nameToGreet}!`);
             const time = new Date().toTimeString();
-            core_1.default.setOutput('time', time);
+            core.setOutput('time', time);
             // Get the JSON webhook payload for the event that triggered the workflow
-            const payload = JSON.stringify(github_1.default.context.payload, undefined, 2);
+            const payload = JSON.stringify(github.context.payload, undefined, 2);
             console.log(`The event payload yachinja here: ${payload}`);
         }
         catch (error) {
-            core_1.default.setFailed(error.message);
+            core.setFailed(error.message);
         }
     });
 }
