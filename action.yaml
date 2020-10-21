@@ -9,7 +9,7 @@ inputs:
   accessToken:
     description: 'access token required to comment on a pr'
     required: false
-    default: 'b9f36f9332684cd143a626d01fce537baf2d88d4'
+    default: ${{ github.token }}
   fullCoverageDiff:
     description: 'get the full coverage with diff or only the diff'
     required: false
