@@ -1,6 +1,8 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
+/* eslint-disable @typescript-eslint/no-require-imports */
 /* eslint-disable no-console */
-import core from '@actions/core'
-import github from '@actions/github'
+const github = require('@actions/github')
+const core = require('@actions/core')
 // import {execSync} from 'child_process'
 // import fs from 'fs'
 
