@@ -295,6 +295,7 @@ function main() {
             //start
             // `who-to-greet` input defined in action metadata file
             console.log('core: ', core_1.default);
+            console.log('github: ', github_1.default);
             const nameToGreet = core_1.default.getInput('who-to-greet');
             console.log(`Hello iwe ndiwe ani ko iwe ${nameToGreet}!`);
             const time = new Date().toTimeString();

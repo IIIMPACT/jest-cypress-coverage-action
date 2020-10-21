@@ -9,6 +9,7 @@ async function main(): Promise<void> {
     //start
     // `who-to-greet` input defined in action metadata file
     console.log('core: ', core)
+    console.log('github: ', github)
     const nameToGreet = core.getInput('who-to-greet')
     console.log(`Hello iwe ndiwe ani ko iwe ${nameToGreet}!`)
     const time = new Date().toTimeString()
