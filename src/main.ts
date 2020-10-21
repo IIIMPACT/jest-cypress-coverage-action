@@ -3,11 +3,14 @@
 /* eslint-disable no-console */
 const github = require('@actions/github')
 const core = require('@actions/core')
-const execSync = require('child_process').execSync
+const execSync = require('child_process')
 // import fs from 'fs'
 
 async function main(): Promise<void> {
   try {
+    console.log('execSync: ', execSync)
+    console.log('execSync.execSync: ', execSync.execSync)
+    console.log('typeof execSync.execSync: ', typeof execSync.execSync)
     const repoName = github.context.repo.repo
     console.log('repoName: ', repoName)
     const repoOwner = github.context.repo.owner
