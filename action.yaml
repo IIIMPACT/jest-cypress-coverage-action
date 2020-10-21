@@ -9,7 +9,7 @@ inputs:
   accessToken:
     description: 'access token required to comment on a pr'
     required: false
-    default: ${{ secrets.GITHUB_TOKEN }}
+    default: ${ secrets.GITHUB_TOKEN }
   fullCoverageDiff:
     description: 'get the full coverage with diff or only the diff'
     required: false
