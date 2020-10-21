@@ -292,15 +292,14 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 /* eslint-disable no-console */
 const github = __webpack_require__(469);
 const core = __webpack_require__(470);
-const execSync = __webpack_require__(129);
+const execSync = __webpack_require__(129).execSync;
 // import fs from 'fs'
 function main() {
     var _a, _b;
     return __awaiter(this, void 0, void 0, function* () {
         try {
             console.log('execSync: ', execSync);
-            console.log('execSync.execSync: ', execSync.execSync);
-            console.log('typeof execSync.execSync: ', typeof execSync.execSync);
+            console.log('typeof execSync.execSync: ', typeof execSync);
             const repoName = github.context.repo.repo;
             console.log('repoName: ', repoName);
             const repoOwner = github.context.repo.owner;
