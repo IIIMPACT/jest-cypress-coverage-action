@@ -3,7 +3,7 @@
 /* eslint-disable no-console */
 const github = require('@actions/github')
 const core = require('@actions/core')
-const execSync = require('@actions/core').execSync
+const execSync = require('child_process').execSync
 // import fs from 'fs'
 
 async function main(): Promise<void> {
@@ -12,11 +12,13 @@ async function main(): Promise<void> {
     console.log('repoName: ', repoName)
     const repoOwner = github.context.repo.owner
     console.log('repoOwner : ', repoOwner)
-    // const githubToken = core.getInput('accessToken')
-    // const fullCoverage = JSON.parse(core.getInput('fullCoverageDiff'))
-    // const commandToRun = core.getInput('runCommand')
-    // const githubClient = github.getOctokit(githubToken)
-    // console.log('githubClient: ', githubClient);
+    const githubToken = core.getInput('accessToken')
+    const fullCoverage = JSON.parse(core.getInput('fullCoverageDiff'))
+    console.log('fullCoverage : ', fullCoverage)
+    const commandToRun = core.getInput('runCommand')
+    console.log('commandToRun: ', commandToRun)
+    const githubClient = github.getOctokit(githubToken)
+    console.log('githubClient: ', githubClient)
     const prNumber = github.context.issue.number
     console.log('prNumber: ', prNumber)
     const branchNameBase = github.context.payload.pull_request?.base.ref
