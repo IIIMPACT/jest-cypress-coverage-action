@@ -305,6 +305,7 @@ function main() {
             const repoOwner = github.context.repo.owner;
             console.log('repoOwner : ', repoOwner);
             const githubToken = core.getInput('accessToken');
+            console.log('githubToken: ', githubToken);
             const fullCoverage = JSON.parse(core.getInput('fullCoverageDiff'));
             console.log('fullCoverage : ', fullCoverage);
             const commandToRun = core.getInput('runCommand');
