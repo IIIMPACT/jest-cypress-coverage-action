@@ -294,6 +294,7 @@ const github = __webpack_require__(469);
 const core = __webpack_require__(470);
 const execSync = __webpack_require__(129).execSync;
 // import fs from 'fs'
+const { GitHub } = core;
 function main() {
     var _a, _b;
     return __awaiter(this, void 0, void 0, function* () {
@@ -304,8 +305,10 @@ function main() {
             console.log('repoName: ', repoName);
             const repoOwner = github.context.repo.owner;
             console.log('repoOwner : ', repoOwner);
-            const githubToken = core.getInput('accessToken');
+            const githubToken = core.getInput('accessToken', { required: true });
             console.log('githubToken: ', githubToken);
+            const sha = core.getInput('sha');
+            console.log('sha: ', sha);
             const fullCoverage = JSON.parse(core.getInput('fullCoverageDiff'));
             console.log('fullCoverage : ', fullCoverage);
             const commandToRun = core.getInput('runCommand');
@@ -318,6 +321,18 @@ function main() {
             console.log('branchNameBase: ', branchNameBase);
             const branchNameHead = (_b = github.context.payload.pull_request) === null || _b === void 0 ? void 0 : _b.head.ref;
             console.log('branchNameHead: ', branchNameHead);
+            const client = new GitHub(githubToken, {});
+            const result = yield client.repos.listPullRequestsAssociatedWithCommit({
+                owner: github.context.repo.owner,
+                repo: github.context.repo.repo,
+                // eslint-disable-next-line @typescript-eslint/camelcase
+                commit_sha: sha || github.context.sha
+            });
+            const pr = result.data.length > 0 && result.data[0];
+            console.log('pr', (pr && pr.number) || '');
+            console.log('number', (pr && pr.number) || '');
+            console.log('title', (pr && pr.title) || '');
+            console.log('body', (pr && pr.body) || '');
             execSync('echo "it can run stuff"');
             // const codeCoverageNew = <CoverageReport>(
             //   JSON.parse(fs.readFileSync('coverage-summary.json').toString())
