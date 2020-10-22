@@ -13,7 +13,7 @@
     "test": "jest",
     "all": "npm run build && npm run format && npm run lint && npm run pack",
     "all:test": "npm run build && npm run format && npm run lint && npm run pack && npm test",
-    "publish": "npm run all:test && git add . && git commit -m $MSG && git push"
+    "publish": "npm run all:test && git add . && git commit -m '$MSG' && git push"
   },
   "repository": {
     "type": "git",
@@ -36,7 +36,8 @@
   "homepage": "https://github.com/IIIMPACT/jest-cypress-coverage-action#readme",
   "dependencies": {
     "@actions/core": "^1.2.4",
-    "@actions/github": "^4.0.0"
+    "@actions/github": "^4.0.0",
+    "fs-extra": "^9.0.1"
   },
   "devDependencies": {
     "@types/jest": "^24.9.1",

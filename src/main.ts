@@ -4,6 +4,7 @@
 const github = require('@actions/github')
 const core = require('@actions/core')
 const execSync = require('child_process').execSync
+const fs = require('fs-extra')
 // import fs from 'fs'
 
 const parsePullRequestId = (githubRef?: string): string => {
@@ -56,10 +57,11 @@ async function main(): Promise<void> {
     const pullRequestId = parsePullRequestId(GITHUB_REF)
     console.log('pullRequestId: ', pullRequestId)
     console.log('github.context.payload: ', github.context.payload)
-    execSync('echo "it can run stuff now"')
-    // const codeCoverageNew = <CoverageReport>(
-    //   JSON.parse(fs.readFileSync('coverage-summary.json').toString())
-    // )
+    execSync('npm run test-all')
+    const jestCodeCoverageNew = fs.readJsonSync('coverage/coverage-final.json')
+    console.log('jestCodeCoverageNew: ', jestCodeCoverageNew)
+    const jestCodeCoverageNew1 = fs.readJsonSync('coverage-final.json')
+    console.log('jestCodeCoverageNew1: ', jestCodeCoverageNew1)
   } catch (error) {
     core.setFailed(error.message)
   }
