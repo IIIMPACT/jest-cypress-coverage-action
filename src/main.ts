@@ -5,7 +5,13 @@ const github = require('@actions/github')
 const core = require('@actions/core')
 const execSync = require('child_process').execSync
 // import fs from 'fs'
-const {GitHub} = core
+
+const parsePullRequestId = (githubRef?: string): string => {
+  const result = githubRef ? /refs\/pull\/(\d+)\/merge/g.exec(githubRef) : null
+  if (!result) throw new Error('Reference not found.')
+  const [, pullRequestId] = result
+  return pullRequestId
+}
 
 async function main(): Promise<void> {
   try {
@@ -32,7 +38,7 @@ async function main(): Promise<void> {
     const branchNameHead = github.context.payload.pull_request?.head.ref
     console.log('branchNameHead: ', branchNameHead)
 
-    const client = new GitHub(githubToken, {})
+    /*const client = new GitHub(githubToken, {})
     const result = await client.repos.listPullRequestsAssociatedWithCommit({
       owner: github.context.repo.owner,
       repo: github.context.repo.repo,
@@ -43,8 +49,13 @@ async function main(): Promise<void> {
     console.log('pr', (pr && pr.number) || '')
     console.log('number', (pr && pr.number) || '')
     console.log('title', (pr && pr.title) || '')
-    console.log('body', (pr && pr.body) || '')
-    execSync('echo "it can run stuff"')
+    console.log('body', (pr && pr.body) || '')*/
+    const {GITHUB_REF, GITHUB_EVENT_PATH} = process.env
+    console.log('GITHUB_EVENT_PATH: ', GITHUB_EVENT_PATH)
+    console.log('GITHUB_REF: ', GITHUB_REF)
+    const pullRequestId = parsePullRequestId(GITHUB_REF)
+    console.log('pullRequestId: ', pullRequestId)
+    execSync('echo "it can run stuff now"')
     // const codeCoverageNew = <CoverageReport>(
     //   JSON.parse(fs.readFileSync('coverage-summary.json').toString())
     // )
