@@ -13,7 +13,7 @@
     "test": "jest",
     "all": "npm run build && npm run format && npm run lint && npm run pack",
     "all:test": "npm run build && npm run format && npm run lint && npm run pack && npm test",
-    "publish": "npm run all:test && git add . && git commit -m 'publish' && git push"
+    "publish": "npm run all:test && git add . && git commit -m $MSG && git push"
   },
   "repository": {
     "type": "git",
