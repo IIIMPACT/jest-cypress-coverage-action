@@ -344,6 +344,7 @@ function main() {
             console.log('GITHUB_REF: ', GITHUB_REF);
             const pullRequestId = parsePullRequestId(GITHUB_REF);
             console.log('pullRequestId: ', pullRequestId);
+            console.log('github.context.payload: ', github.context.payload);
             execSync('echo "it can run stuff now"');
             // const codeCoverageNew = <CoverageReport>(
             //   JSON.parse(fs.readFileSync('coverage-summary.json').toString())
