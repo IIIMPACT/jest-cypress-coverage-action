@@ -36,7 +36,7 @@ async function main(): Promise<void> {
     const githubClient = github.getOctokit(githubToken)
     // console.log('githubClient: ', githubClient)
     const prNumber = github.context.issue.number
-    console.log('!!!prNumber: ', prNumber)
+    console.log('!!! prNumber: ', prNumber)
     const branchNameBase = github.context.payload.pull_request?.base.ref
     console.log('branchNameBase: ', branchNameBase)
     const branchNameHead = github.context.payload.pull_request?.head.ref
@@ -60,18 +60,18 @@ async function main(): Promise<void> {
     // const pullRequestId = parsePullRequestId(GITHUB_REF)
     // console.log('pullRequestId: ', pullRequestId)
     // console.log('github.context.payload: ', github.context.payload)
-    execSync('git fetch')
-    execSync('git stash')
-    execSync(`git checkout --progress --force ${branchNameBase}`)
-    execSync('npm run test-all')
+    await execSync('git fetch')
+    await execSync('git stash')
+    await execSync(`git checkout --progress --force ${branchNameBase}`)
+    await execSync('npm run test-all')
     const jestCodeCoverageNew = JSON.parse(
       fs.readFileSync('coverage/coverage-summary.json').toString()
     )
     console.log('111 jestCodeCoverageNew: ', jestCodeCoverageNew)
-    execSync('git fetch')
-    execSync('git stash')
-    execSync(`git checkout --progress --force ${branchNameBase}`)
-    execSync('npm run test-all')
+    await execSync('git fetch')
+    await execSync('git stash')
+    await execSync(`git checkout --progress --force ${branchNameBase}`)
+    await execSync('npm run test-all')
     const jestCodeCoverageOld = JSON.parse(
       fs.readFileSync('coverage/coverage-summary.json').toString()
     )

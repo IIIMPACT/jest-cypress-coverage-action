@@ -325,7 +325,7 @@ function main() {
             const githubClient = github.getOctokit(githubToken);
             // console.log('githubClient: ', githubClient)
             const prNumber = github.context.issue.number;
-            console.log('!!!prNumber: ', prNumber);
+            console.log('!!! prNumber: ', prNumber);
             const branchNameBase = (_a = github.context.payload.pull_request) === null || _a === void 0 ? void 0 : _a.base.ref;
             console.log('branchNameBase: ', branchNameBase);
             const branchNameHead = (_b = github.context.payload.pull_request) === null || _b === void 0 ? void 0 : _b.head.ref;
@@ -348,16 +348,16 @@ function main() {
             // const pullRequestId = parsePullRequestId(GITHUB_REF)
             // console.log('pullRequestId: ', pullRequestId)
             // console.log('github.context.payload: ', github.context.payload)
-            execSync('git fetch');
-            execSync('git stash');
-            execSync(`git checkout --progress --force ${branchNameBase}`);
-            execSync('npm run test-all');
+            yield execSync('git fetch');
+            yield execSync('git stash');
+            yield execSync(`git checkout --progress --force ${branchNameBase}`);
+            yield execSync('npm run test-all');
             const jestCodeCoverageNew = JSON.parse(fs.readFileSync('coverage/coverage-summary.json').toString());
             console.log('111 jestCodeCoverageNew: ', jestCodeCoverageNew);
-            execSync('git fetch');
-            execSync('git stash');
-            execSync(`git checkout --progress --force ${branchNameBase}`);
-            execSync('npm run test-all');
+            yield execSync('git fetch');
+            yield execSync('git stash');
+            yield execSync(`git checkout --progress --force ${branchNameBase}`);
+            yield execSync('npm run test-all');
             const jestCodeCoverageOld = JSON.parse(fs.readFileSync('coverage/coverage-summary.json').toString());
             console.log('111 jestCodeCoverageOld: ', jestCodeCoverageOld);
             const currentDirectory = execSync('pwd')
