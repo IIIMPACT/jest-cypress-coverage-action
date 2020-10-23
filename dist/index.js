@@ -866,9 +866,9 @@ function main() {
             execSync('npm run test-all');
             const jestCodeCoverageNew = fs.readJsonSync('coverage/coverage-final.json');
             console.log('jestCodeCoverageNew: ', jestCodeCoverageNew);
-            execSync('/usr/bin/git fetch');
-            execSync('/usr/bin/git stash');
-            execSync(`/usr/bin/git checkout --progress --force ${branchNameBase}`);
+            execSync('git fetch');
+            execSync('git stash');
+            execSync(`git checkout --progress --force ${branchNameBase}`);
             execSync('npm run test-all');
             const jestCodeCoverageOld = fs.readJsonSync('coverage/coverage-final.json');
             console.log('jestCodeCoverageOld: ', jestCodeCoverageOld);
