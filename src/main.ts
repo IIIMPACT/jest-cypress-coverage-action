@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/camelcase */
 /* eslint-disable @typescript-eslint/no-var-requires */
 /* eslint-disable @typescript-eslint/no-require-imports */
 /* eslint-disable no-console */
@@ -19,11 +20,11 @@ async function main(): Promise<void> {
   try {
     // console.log('execSync: ', execSync)
     // console.log('typeof execSync.execSync: ', typeof execSync)
-    // const repoName = github.context.repo.repo
+    const repoName = github.context.repo.repo
     // console.log('repoName: ', repoName)
-    // const repoOwner = github.context.repo.owner
+    const repoOwner = github.context.repo.owner
     // console.log('repoOwner : ', repoOwner)
-    // const githubToken = core.getInput('accessToken', {required: true})
+    const githubToken = core.getInput('accessToken', {required: true})
     // console.log('githubToken: ', githubToken)
     // const sha = core.getInput('sha')
     // console.log('sha: ', sha)
@@ -31,9 +32,9 @@ async function main(): Promise<void> {
     // console.log('fullCoverage : ', fullCoverage)
     // const commandToRun = core.getInput('runCommand')
     // console.log('commandToRun: ', commandToRun)
-    // const githubClient = github.getOctokit(githubToken)
+    const githubClient = github.getOctokit(githubToken)
     // console.log('githubClient: ', githubClient)
-    // const prNumber = github.context.issue.number
+    const prNumber = github.context.issue.number
     // console.log('prNumber: ', prNumber)
     const branchNameBase = github.context.payload.pull_request?.base.ref
     // console.log('branchNameBase: ', branchNameBase)
@@ -94,6 +95,12 @@ async function main(): Promise<void> {
       messageToPost += coverageDetails.join('\n')
     }
     console.log('messageToPost Final: ', messageToPost)
+    await githubClient.issues.createComment({
+      repo: repoName,
+      owner: repoOwner,
+      body: messageToPost,
+      issue_number: prNumber
+    })
   } catch (error) {
     core.setFailed(error.message)
   }

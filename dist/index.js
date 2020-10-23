@@ -803,6 +803,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+/* eslint-disable @typescript-eslint/camelcase */
 /* eslint-disable @typescript-eslint/no-var-requires */
 /* eslint-disable @typescript-eslint/no-require-imports */
 /* eslint-disable no-console */
@@ -824,11 +825,11 @@ function main() {
         try {
             // console.log('execSync: ', execSync)
             // console.log('typeof execSync.execSync: ', typeof execSync)
-            // const repoName = github.context.repo.repo
+            const repoName = github.context.repo.repo;
             // console.log('repoName: ', repoName)
-            // const repoOwner = github.context.repo.owner
+            const repoOwner = github.context.repo.owner;
             // console.log('repoOwner : ', repoOwner)
-            // const githubToken = core.getInput('accessToken', {required: true})
+            const githubToken = core.getInput('accessToken', { required: true });
             // console.log('githubToken: ', githubToken)
             // const sha = core.getInput('sha')
             // console.log('sha: ', sha)
@@ -836,9 +837,9 @@ function main() {
             // console.log('fullCoverage : ', fullCoverage)
             // const commandToRun = core.getInput('runCommand')
             // console.log('commandToRun: ', commandToRun)
-            // const githubClient = github.getOctokit(githubToken)
+            const githubClient = github.getOctokit(githubToken);
             // console.log('githubClient: ', githubClient)
-            // const prNumber = github.context.issue.number
+            const prNumber = github.context.issue.number;
             // console.log('prNumber: ', prNumber)
             const branchNameBase = (_a = github.context.payload.pull_request) === null || _a === void 0 ? void 0 : _a.base.ref;
             // console.log('branchNameBase: ', branchNameBase)
@@ -889,6 +890,12 @@ function main() {
                 messageToPost += coverageDetails.join('\n');
             }
             console.log('messageToPost Final: ', messageToPost);
+            yield githubClient.issues.createComment({
+                repo: repoName,
+                owner: repoOwner,
+                body: messageToPost,
+                issue_number: prNumber
+            });
         }
         catch (error) {
             core.setFailed(error.message);
