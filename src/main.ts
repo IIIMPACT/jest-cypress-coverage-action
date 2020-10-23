@@ -5,6 +5,7 @@ const github = require('@actions/github')
 const core = require('@actions/core')
 const execSync = require('child_process').execSync
 const fs = require('fs-extra')
+const DiffChecker = require('./DiffChecker')
 // import fs from 'fs'
 
 const parsePullRequestId = (githubRef?: string): string => {
@@ -60,8 +61,30 @@ async function main(): Promise<void> {
     execSync('npm run test-all')
     const jestCodeCoverageNew = fs.readJsonSync('coverage/coverage-final.json')
     console.log('jestCodeCoverageNew: ', jestCodeCoverageNew)
-    const jestCodeCoverageNew1 = fs.readJsonSync('coverage-final.json')
-    console.log('jestCodeCoverageNew1: ', jestCodeCoverageNew1)
+    execSync('/usr/bin/git fetch')
+    execSync('/usr/bin/git stash')
+    execSync(`/usr/bin/git checkout --progress --force ${branchNameBase}`)
+    execSync('npm run test-all')
+    const jestCodeCoverageOld = fs.readJsonSync('coverage/coverage-final.json')
+    console.log('jestCodeCoverageOld: ', jestCodeCoverageOld)
+    const currentDirectory = execSync('pwd')
+      .toString()
+      .trim()
+    console.log('currentDirectory: ', currentDirectory)
+    let messageToPost = `Code coverage diff between base branch:${branchNameBase} and head branch: ${branchNameHead} \n`
+    console.log('messageToPost: ', messageToPost)
+    const coverageDetails = DiffChecker.getCoverageDetails(
+      !fullCoverage,
+      `${currentDirectory}/`
+    )
+    if (coverageDetails.length === 0) {
+      messageToPost =
+        'No changes to code coverage between the base branch and the head branch'
+    } else {
+      messageToPost +=
+        'File | % Stmts | % Branch | % Funcs | % Lines \n -----|---------|----------|---------|------ \n'
+      messageToPost += coverageDetails.join('\n')
+    }
   } catch (error) {
     core.setFailed(error.message)
   }
