@@ -348,19 +348,19 @@ function main() {
             // const pullRequestId = parsePullRequestId(GITHUB_REF)
             // console.log('pullRequestId: ', pullRequestId)
             // console.log('github.context.payload: ', github.context.payload)
-            yield execSync('git fetch');
-            yield execSync('git stash');
-            yield execSync(`git checkout --progress --force ${branchNameBase}`);
+            // await execSync('git fetch')
+            // await execSync('git stash')
+            // await execSync(`git checkout --progress --force ${branchNameBase}`)
             yield execSync('npm run test-all');
-            const jestCodeCoverageNew = JSON.parse(fs.readFileSync('coverage/coverage-summary.json').toString());
+            const jestCodeCoverageNew = yield JSON.parse(fs.readFileSync('coverage/coverage-summary.json').toString());
             console.log('111 jestCodeCoverageNew: ', jestCodeCoverageNew);
             yield execSync('git fetch');
             yield execSync('git stash');
             yield execSync(`git checkout --progress --force ${branchNameBase}`);
             yield execSync('npm run test-all');
-            const jestCodeCoverageOld = JSON.parse(fs.readFileSync('coverage/coverage-summary.json').toString());
+            const jestCodeCoverageOld = yield JSON.parse(fs.readFileSync('coverage/coverage-summary.json').toString());
             console.log('111 jestCodeCoverageOld: ', jestCodeCoverageOld);
-            const currentDirectory = execSync('pwd')
+            const currentDirectory = yield execSync('pwd')
                 .toString()
                 .trim();
             console.log('111 currentDirectory: ', currentDirectory);

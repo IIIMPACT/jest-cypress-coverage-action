@@ -60,11 +60,11 @@ async function main(): Promise<void> {
     // const pullRequestId = parsePullRequestId(GITHUB_REF)
     // console.log('pullRequestId: ', pullRequestId)
     // console.log('github.context.payload: ', github.context.payload)
-    await execSync('git fetch')
-    await execSync('git stash')
-    await execSync(`git checkout --progress --force ${branchNameBase}`)
+    // await execSync('git fetch')
+    // await execSync('git stash')
+    // await execSync(`git checkout --progress --force ${branchNameBase}`)
     await execSync('npm run test-all')
-    const jestCodeCoverageNew = JSON.parse(
+    const jestCodeCoverageNew = await JSON.parse(
       fs.readFileSync('coverage/coverage-summary.json').toString()
     )
     console.log('111 jestCodeCoverageNew: ', jestCodeCoverageNew)
@@ -72,11 +72,11 @@ async function main(): Promise<void> {
     await execSync('git stash')
     await execSync(`git checkout --progress --force ${branchNameBase}`)
     await execSync('npm run test-all')
-    const jestCodeCoverageOld = JSON.parse(
+    const jestCodeCoverageOld = await JSON.parse(
       fs.readFileSync('coverage/coverage-summary.json').toString()
     )
     console.log('111 jestCodeCoverageOld: ', jestCodeCoverageOld)
-    const currentDirectory = execSync('pwd')
+    const currentDirectory = await execSync('pwd')
       .toString()
       .trim()
     console.log('111 currentDirectory: ', currentDirectory)
