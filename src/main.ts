@@ -59,6 +59,9 @@ async function main(): Promise<void> {
     // const pullRequestId = parsePullRequestId(GITHUB_REF)
     // console.log('pullRequestId: ', pullRequestId)
     // console.log('github.context.payload: ', github.context.payload)
+    execSync('git fetch')
+    execSync('git stash')
+    execSync(`git checkout --progress --force ${branchNameBase}`)
     execSync('npm run test-all')
     const jestCodeCoverageNew = fs.readJsonSync(
       'coverage/coverage-summary.json'
