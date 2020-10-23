@@ -5983,6 +5983,7 @@ exports.HttpClient = HttpClient;
 
 "use strict";
 
+/* eslint-disable no-console */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // import {CoverageReport} from './Model/CoverageReport'
 // import {DiffCoverageReport} from './Model/DiffCoverageReport'
@@ -6070,6 +6071,7 @@ class DiffChecker {
         return 0;
     }
     getPercentage(coverageData /*CoverageData*/) {
+        console.log('coverageData:: ', coverageData);
         return coverageData.pct;
     }
 }

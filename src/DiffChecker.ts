@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // import {CoverageReport} from './Model/CoverageReport'
 // import {DiffCoverageReport} from './Model/DiffCoverageReport'
@@ -114,6 +115,7 @@ export class DiffChecker {
   }
 
   private getPercentage(coverageData: any /*CoverageData*/): number {
+    console.log('coverageData:: ', coverageData)
     return coverageData.pct
   }
 }
