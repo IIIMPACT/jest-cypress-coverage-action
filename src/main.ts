@@ -5,7 +5,8 @@
 const github = require('@actions/github')
 const core = require('@actions/core')
 const execSync = require('child_process').execSync
-const fs = require('fs-extra')
+// const fs = require('fs-extra')
+const fs = require('fs')
 const DiffChecker = require('./DiffChecker').DiffChecker
 // import fs from 'fs'
 
@@ -35,7 +36,7 @@ async function main(): Promise<void> {
     const githubClient = github.getOctokit(githubToken)
     // console.log('githubClient: ', githubClient)
     const prNumber = github.context.issue.number
-    console.log('prNumber: ', prNumber)
+    console.log('!!!prNumber: ', prNumber)
     const branchNameBase = github.context.payload.pull_request?.base.ref
     console.log('branchNameBase: ', branchNameBase)
     const branchNameHead = github.context.payload.pull_request?.head.ref
@@ -63,16 +64,16 @@ async function main(): Promise<void> {
     execSync('git stash')
     execSync(`git checkout --progress --force ${branchNameBase}`)
     execSync('npm run test-all')
-    const jestCodeCoverageNew = fs.readJsonSync(
-      'coverage/coverage-summary.json'
+    const jestCodeCoverageNew = JSON.parse(
+      fs.readFileSync('coverage/coverage-summary.json').toString()
     )
     console.log('111 jestCodeCoverageNew: ', jestCodeCoverageNew)
     execSync('git fetch')
     execSync('git stash')
     execSync(`git checkout --progress --force ${branchNameBase}`)
     execSync('npm run test-all')
-    const jestCodeCoverageOld = fs.readJsonSync(
-      'coverage/coverage-summary.json'
+    const jestCodeCoverageOld = JSON.parse(
+      fs.readFileSync('coverage/coverage-summary.json').toString()
     )
     console.log('111 jestCodeCoverageOld: ', jestCodeCoverageOld)
     const currentDirectory = execSync('pwd')
