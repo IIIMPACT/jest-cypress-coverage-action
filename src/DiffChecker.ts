@@ -115,8 +115,7 @@ export class DiffChecker {
   }
 
   private getPercentage(coverageData: any /*CoverageData*/): number {
-    console.log('coverageData:: ', coverageData)
-    return 8
-    // return coverageData.pct
+    console.log('coverageData: ', coverageData)
+    return coverageData.pct
   }
 }

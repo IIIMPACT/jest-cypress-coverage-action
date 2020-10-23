@@ -59,13 +59,17 @@ async function main(): Promise<void> {
     // console.log('pullRequestId: ', pullRequestId)
     // console.log('github.context.payload: ', github.context.payload)
     execSync('npm run test-all')
-    const jestCodeCoverageNew = fs.readJsonSync('coverage-summary.json')
+    const jestCodeCoverageNew = fs.readJsonSync(
+      'coverage/coverage-summary.json'
+    )
     console.log('111 jestCodeCoverageNew: ', jestCodeCoverageNew)
     execSync('git fetch')
     execSync('git stash')
     execSync(`git checkout --progress --force ${branchNameBase}`)
     execSync('npm run test-all')
-    const jestCodeCoverageOld = fs.readJsonSync('coverage-summary.json')
+    const jestCodeCoverageOld = fs.readJsonSync(
+      'coverage/coverage-summary.json'
+    )
     console.log('111 jestCodeCoverageOld: ', jestCodeCoverageOld)
     const currentDirectory = execSync('pwd')
       .toString()

@@ -863,13 +863,13 @@ function main() {
             // console.log('pullRequestId: ', pullRequestId)
             // console.log('github.context.payload: ', github.context.payload)
             execSync('npm run test-all');
-            const jestCodeCoverageNew = fs.readJsonSync('coverage-summary.json');
+            const jestCodeCoverageNew = fs.readJsonSync('coverage/coverage-summary.json');
             console.log('111 jestCodeCoverageNew: ', jestCodeCoverageNew);
             execSync('git fetch');
             execSync('git stash');
             execSync(`git checkout --progress --force ${branchNameBase}`);
             execSync('npm run test-all');
-            const jestCodeCoverageOld = fs.readJsonSync('coverage-summary.json');
+            const jestCodeCoverageOld = fs.readJsonSync('coverage/coverage-summary.json');
             console.log('111 jestCodeCoverageOld: ', jestCodeCoverageOld);
             const currentDirectory = execSync('pwd')
                 .toString()
@@ -6071,9 +6071,8 @@ class DiffChecker {
         return 0;
     }
     getPercentage(coverageData /*CoverageData*/) {
-        console.log('coverageData:: ', coverageData);
-        return 8;
-        // return coverageData.pct
+        console.log('coverageData: ', coverageData);
+        return coverageData.pct;
     }
 }
 exports.DiffChecker = DiffChecker;
