@@ -117,5 +117,3 @@ export class DiffChecker {
     return coverageData.pct
   }
 }
-
-export default DiffChecker

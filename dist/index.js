@@ -810,7 +810,7 @@ const github = __webpack_require__(469);
 const core = __webpack_require__(470);
 const execSync = __webpack_require__(129).execSync;
 const fs = __webpack_require__(226);
-const DiffChecker = __webpack_require__(563);
+const DiffChecker = __webpack_require__(563).DiffChecker;
 // import fs from 'fs'
 const parsePullRequestId = (githubRef) => {
     const result = githubRef ? /refs\/pull\/(\d+)\/merge/g.exec(githubRef) : null;
@@ -6075,7 +6075,6 @@ class DiffChecker {
     }
 }
 exports.DiffChecker = DiffChecker;
-exports.default = DiffChecker;
 
 
 /***/ }),

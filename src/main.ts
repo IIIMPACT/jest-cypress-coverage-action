@@ -5,7 +5,7 @@ const github = require('@actions/github')
 const core = require('@actions/core')
 const execSync = require('child_process').execSync
 const fs = require('fs-extra')
-const DiffChecker = require('./DiffChecker')
+const DiffChecker = require('./DiffChecker').DiffChecker
 // import fs from 'fs'
 
 const parsePullRequestId = (githubRef?: string): string => {
