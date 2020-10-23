@@ -840,11 +840,11 @@ function main() {
             const githubClient = github.getOctokit(githubToken);
             // console.log('githubClient: ', githubClient)
             const prNumber = github.context.issue.number;
-            // console.log('prNumber: ', prNumber)
+            console.log('prNumber: ', prNumber);
             const branchNameBase = (_a = github.context.payload.pull_request) === null || _a === void 0 ? void 0 : _a.base.ref;
-            // console.log('branchNameBase: ', branchNameBase)
+            console.log('branchNameBase: ', branchNameBase);
             const branchNameHead = (_b = github.context.payload.pull_request) === null || _b === void 0 ? void 0 : _b.head.ref;
-            // console.log('branchNameHead: ', branchNameHead)
+            console.log('branchNameHead: ', branchNameHead);
             /*const client = new GitHub(githubToken, {})
             const result = await client.repos.listPullRequestsAssociatedWithCommit({
               owner: github.context.repo.owner,

@@ -35,11 +35,11 @@ async function main(): Promise<void> {
     const githubClient = github.getOctokit(githubToken)
     // console.log('githubClient: ', githubClient)
     const prNumber = github.context.issue.number
-    // console.log('prNumber: ', prNumber)
+    console.log('prNumber: ', prNumber)
     const branchNameBase = github.context.payload.pull_request?.base.ref
-    // console.log('branchNameBase: ', branchNameBase)
+    console.log('branchNameBase: ', branchNameBase)
     const branchNameHead = github.context.payload.pull_request?.head.ref
-    // console.log('branchNameHead: ', branchNameHead)
+    console.log('branchNameHead: ', branchNameHead)
 
     /*const client = new GitHub(githubToken, {})
     const result = await client.repos.listPullRequestsAssociatedWithCommit({
