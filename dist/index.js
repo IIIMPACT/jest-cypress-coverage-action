@@ -812,39 +812,38 @@ const execSync = __webpack_require__(129).execSync;
 const fs = __webpack_require__(226);
 const DiffChecker = __webpack_require__(563).DiffChecker;
 // import fs from 'fs'
-const parsePullRequestId = (githubRef) => {
-    const result = githubRef ? /refs\/pull\/(\d+)\/merge/g.exec(githubRef) : null;
-    if (!result)
-        throw new Error('Reference not found.');
-    const [, pullRequestId] = result;
-    return pullRequestId;
-};
+// const parsePullRequestId = (githubRef?: string): string => {
+//   const result = githubRef ? /refs\/pull\/(\d+)\/merge/g.exec(githubRef) : null
+//   if (!result) throw new Error('Reference not found.')
+//   const [, pullRequestId] = result
+//   return pullRequestId
+// }
 function main() {
     var _a, _b;
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            console.log('execSync: ', execSync);
-            console.log('typeof execSync.execSync: ', typeof execSync);
-            const repoName = github.context.repo.repo;
-            console.log('repoName: ', repoName);
-            const repoOwner = github.context.repo.owner;
-            console.log('repoOwner : ', repoOwner);
-            const githubToken = core.getInput('accessToken', { required: true });
-            console.log('githubToken: ', githubToken);
-            const sha = core.getInput('sha');
-            console.log('sha: ', sha);
+            // console.log('execSync: ', execSync)
+            // console.log('typeof execSync.execSync: ', typeof execSync)
+            // const repoName = github.context.repo.repo
+            // console.log('repoName: ', repoName)
+            // const repoOwner = github.context.repo.owner
+            // console.log('repoOwner : ', repoOwner)
+            // const githubToken = core.getInput('accessToken', {required: true})
+            // console.log('githubToken: ', githubToken)
+            // const sha = core.getInput('sha')
+            // console.log('sha: ', sha)
             const fullCoverage = JSON.parse(core.getInput('fullCoverageDiff'));
-            console.log('fullCoverage : ', fullCoverage);
-            const commandToRun = core.getInput('runCommand');
-            console.log('commandToRun: ', commandToRun);
+            // console.log('fullCoverage : ', fullCoverage)
+            // const commandToRun = core.getInput('runCommand')
+            // console.log('commandToRun: ', commandToRun)
             // const githubClient = github.getOctokit(githubToken)
             // console.log('githubClient: ', githubClient)
-            const prNumber = github.context.issue.number;
-            console.log('prNumber: ', prNumber);
+            // const prNumber = github.context.issue.number
+            // console.log('prNumber: ', prNumber)
             const branchNameBase = (_a = github.context.payload.pull_request) === null || _a === void 0 ? void 0 : _a.base.ref;
-            console.log('branchNameBase: ', branchNameBase);
+            // console.log('branchNameBase: ', branchNameBase)
             const branchNameHead = (_b = github.context.payload.pull_request) === null || _b === void 0 ? void 0 : _b.head.ref;
-            console.log('branchNameHead: ', branchNameHead);
+            // console.log('branchNameHead: ', branchNameHead)
             /*const client = new GitHub(githubToken, {})
             const result = await client.repos.listPullRequestsAssociatedWithCommit({
               owner: github.context.repo.owner,
@@ -857,15 +856,15 @@ function main() {
             console.log('number', (pr && pr.number) || '')
             console.log('title', (pr && pr.title) || '')
             console.log('body', (pr && pr.body) || '')*/
-            const { GITHUB_REF, GITHUB_EVENT_PATH } = process.env;
-            console.log('GITHUB_EVENT_PATH: ', GITHUB_EVENT_PATH);
-            console.log('GITHUB_REF: ', GITHUB_REF);
-            const pullRequestId = parsePullRequestId(GITHUB_REF);
-            console.log('pullRequestId: ', pullRequestId);
-            console.log('github.context.payload: ', github.context.payload);
+            // const {GITHUB_REF, GITHUB_EVENT_PATH} = process.env
+            // console.log('GITHUB_EVENT_PATH: ', GITHUB_EVENT_PATH)
+            // console.log('GITHUB_REF: ', GITHUB_REF)
+            // const pullRequestId = parsePullRequestId(GITHUB_REF)
+            // console.log('pullRequestId: ', pullRequestId)
+            // console.log('github.context.payload: ', github.context.payload)
             execSync('npm run test-all');
             const jestCodeCoverageNew = fs.readJsonSync('coverage/coverage-final.json');
-            console.log('jestCodeCoverageNew: ', jestCodeCoverageNew);
+            // console.log('jestCodeCoverageNew: ', jestCodeCoverageNew)
             execSync('git fetch');
             execSync('git stash');
             execSync(`git checkout --progress --force ${branchNameBase}`);
@@ -878,7 +877,7 @@ function main() {
             console.log('currentDirectory: ', currentDirectory);
             const diffChecker = new DiffChecker(jestCodeCoverageNew, jestCodeCoverageOld);
             let messageToPost = `Code coverage diff between base branch:${branchNameBase} and head branch: ${branchNameHead} \n`;
-            console.log('messageToPost: ', messageToPost);
+            // console.log('messageToPost: ', messageToPost)
             const coverageDetails = diffChecker.getCoverageDetails(!fullCoverage, `${currentDirectory}/`);
             if (coverageDetails.length === 0) {
                 messageToPost =
