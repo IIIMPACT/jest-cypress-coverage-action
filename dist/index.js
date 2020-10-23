@@ -864,17 +864,17 @@ function main() {
             // console.log('github.context.payload: ', github.context.payload)
             execSync('npm run test-all');
             const jestCodeCoverageNew = fs.readJsonSync('coverage-summary.json');
-            // console.log('jestCodeCoverageNew: ', jestCodeCoverageNew)
+            console.log('111 jestCodeCoverageNew: ', jestCodeCoverageNew);
             execSync('git fetch');
             execSync('git stash');
             execSync(`git checkout --progress --force ${branchNameBase}`);
             execSync('npm run test-all');
             const jestCodeCoverageOld = fs.readJsonSync('coverage-summary.json');
-            console.log('jestCodeCoverageOld: ', jestCodeCoverageOld);
+            console.log('111 jestCodeCoverageOld: ', jestCodeCoverageOld);
             const currentDirectory = execSync('pwd')
                 .toString()
                 .trim();
-            console.log('currentDirectory: ', currentDirectory);
+            console.log('111 currentDirectory: ', currentDirectory);
             const diffChecker = new DiffChecker(jestCodeCoverageNew, jestCodeCoverageOld);
             let messageToPost = `Code coverage diff between base branch:${branchNameBase} and head branch: ${branchNameHead} \n`;
             // console.log('messageToPost: ', messageToPost)
