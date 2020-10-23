@@ -71,9 +71,13 @@ async function main(): Promise<void> {
       .toString()
       .trim()
     console.log('currentDirectory: ', currentDirectory)
+    const diffChecker = new DiffChecker(
+      jestCodeCoverageNew,
+      jestCodeCoverageOld
+    )
     let messageToPost = `Code coverage diff between base branch:${branchNameBase} and head branch: ${branchNameHead} \n`
     console.log('messageToPost: ', messageToPost)
-    const coverageDetails = DiffChecker.getCoverageDetails(
+    const coverageDetails = diffChecker.getCoverageDetails(
       !fullCoverage,
       `${currentDirectory}/`
     )
@@ -85,6 +89,7 @@ async function main(): Promise<void> {
         'File | % Stmts | % Branch | % Funcs | % Lines \n -----|---------|----------|---------|------ \n'
       messageToPost += coverageDetails.join('\n')
     }
+    console.log('messageToPost Final: ', messageToPost)
   } catch (error) {
     core.setFailed(error.message)
   }

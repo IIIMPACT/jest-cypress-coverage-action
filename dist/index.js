@@ -876,9 +876,10 @@ function main() {
                 .toString()
                 .trim();
             console.log('currentDirectory: ', currentDirectory);
+            const diffChecker = new DiffChecker(jestCodeCoverageNew, jestCodeCoverageOld);
             let messageToPost = `Code coverage diff between base branch:${branchNameBase} and head branch: ${branchNameHead} \n`;
             console.log('messageToPost: ', messageToPost);
-            const coverageDetails = DiffChecker.getCoverageDetails(!fullCoverage, `${currentDirectory}/`);
+            const coverageDetails = diffChecker.getCoverageDetails(!fullCoverage, `${currentDirectory}/`);
             if (coverageDetails.length === 0) {
                 messageToPost =
                     'No changes to code coverage between the base branch and the head branch';
@@ -888,6 +889,7 @@ function main() {
                     'File | % Stmts | % Branch | % Funcs | % Lines \n -----|---------|----------|---------|------ \n';
                 messageToPost += coverageDetails.join('\n');
             }
+            console.log('messageToPost Final: ', messageToPost);
         }
         catch (error) {
             core.setFailed(error.message);
