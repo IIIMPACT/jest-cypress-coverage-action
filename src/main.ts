@@ -11,7 +11,7 @@ const execSync = require('child_process').execSync
 const fs = require('fs')
 const fs1 = require('fs-extra')
 
-const createCoverageMap = require('istanbul-lib-coverage').createCoverageMap
+// const createCoverageMap = require('istanbul-lib-coverage').createCoverageMap
 const {createReporter} = require('istanbul-api')
 
 const {exec} = require('child_process')
@@ -54,9 +54,10 @@ async function mergeJestCypressCoverage(
 ): Promise<void> {
   console.log('changedSince', baseRef)
 
-  const map = createCoverageMap({})
+  // const map = createCoverageMap({})
 
-  let fileNamesMap: FileNamesMap = {}
+  // let fileNamesMap: FileNamesMap = {}
+  let fileNamesMap: FileNamesMap = null
 
   if (baseRef) {
     const headRef =
@@ -77,7 +78,8 @@ async function mergeJestCypressCoverage(
 
   for (const file of reportFiles) {
     const r = fs1.readJsonSync(file)
-    const o = Object.entries<{data: any}>(r).reduce(
+    Object.entries<{data: any}>(r).reduce(
+      // const o = Object.entries<{data: any}>(r).reduce(
       (acc: {[key: string]: any}, [key, value]) => {
         let output = value
         if (value.data) {
@@ -90,12 +92,12 @@ async function mergeJestCypressCoverage(
       },
       {}
     )
-    map.merge(o)
+    // map.merge(o)
   }
 
   const reporter = createReporter()
   reporter.addAll(reporters)
-  reporter.write(map)
+  // reporter.write(map)
 }
 
 async function main(): Promise<void> {
