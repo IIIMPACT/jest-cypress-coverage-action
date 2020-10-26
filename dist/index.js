@@ -5818,14 +5818,21 @@ function main() {
             // await execSync('git fetch')
             // await execSync('git stash')
             // await execSync(`git checkout --progress --force ${branchNameBase}`)
-            yield execSync('npm run test:all');
+            yield execSync('npm run test:all & test:cypress:staging'); // should include cypress here or add it as separate
+            const jestFullCodeCoverageNew = yield JSON.parse(fs.readFileSync('jest-coverage-full/coverage-final.json').toString());
+            console.log('jestFullCodeCoverageNew:', jestFullCodeCoverageNew);
             const jestFullCodeCoverageSummaryNew = yield JSON.parse(fs.readFileSync('jest-coverage-full/coverage-summary.json').toString());
             console.log('jestFullCodeCoverageSummaryNew:', jestFullCodeCoverageSummaryNew);
             //write jestFullCodeCoverageSummaryNew to fs
             yield execSync(`npm run merge  -- --report ./jest-coverage-full/coverage-final.json`);
             // await mergeJestCypressCoverage(['jest-coverage-full/coverage-summary.json'])
+            const jestFullCodeCoverageNew1 = yield JSON.parse(fs.readFileSync('coverage/coverage-final.json').toString());
+            console.log('jestFullCodeCoverageNew1:', jestFullCodeCoverageNew1);
             const jestFullCodeCoverageSummaryNew1 = yield JSON.parse(fs.readFileSync('coverage/coverage-summary.json').toString());
             console.log('jestFullCodeCoverageSummaryNew1:', jestFullCodeCoverageSummaryNew1);
+            // TODO
+            // 1. get summary of PR pull request and test this against threshold
+            // 2. get coverage diff and display
             /*console.log('111 jestCodeCoverageNew: ', jestCodeCoverageNew)
             await execSync('git fetch')
             await execSync('git stash')
