@@ -5763,7 +5763,7 @@ const execSync = __webpack_require__(129).execSync;
 // const fs = require('fs-extra')
 const fs = __webpack_require__(747);
 // const DiffChecker = require('./DiffChecker').DiffChecker
-const { merge: mergeJestCypressCoverage } = __webpack_require__(383);
+// const {merge: mergeJestCypressCoverage} = require('./mergeJestCypressCoverage')
 // import fs from 'fs'
 // const parsePullRequestId = (githubRef?: string): string => {
 //   const result = githubRef ? /refs\/pull\/(\d+)\/merge/g.exec(githubRef) : null
@@ -5823,7 +5823,7 @@ function main() {
             console.log('jestFullCodeCoverageSummaryNew:', jestFullCodeCoverageSummaryNew);
             //write jestFullCodeCoverageSummaryNew to fs
             yield execSync(`npm run merge  -- --report ./jest-coverage-full/coverage-final.json`);
-            yield mergeJestCypressCoverage(['jest-coverage-full/coverage-summary.json']);
+            // await mergeJestCypressCoverage(['jest-coverage-full/coverage-summary.json'])
             const jestFullCodeCoverageSummaryNew1 = yield JSON.parse(fs.readFileSync('coverage/coverage-summary.json').toString());
             console.log('jestFullCodeCoverageSummaryNew1:', jestFullCodeCoverageSummaryNew1);
             /*console.log('111 jestCodeCoverageNew: ', jestCodeCoverageNew)
@@ -5871,14 +5871,6 @@ function main() {
     });
 }
 main();
-
-
-/***/ }),
-
-/***/ 383:
-/***/ ((module) => {
-
-module.exports = eval("require")("./mergeJestCypressCoverage");
 
 
 /***/ }),

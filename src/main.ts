@@ -8,7 +8,7 @@ const execSync = require('child_process').execSync
 // const fs = require('fs-extra')
 const fs = require('fs')
 // const DiffChecker = require('./DiffChecker').DiffChecker
-const {merge: mergeJestCypressCoverage} = require('./mergeJestCypressCoverage')
+// const {merge: mergeJestCypressCoverage} = require('./mergeJestCypressCoverage')
 // import fs from 'fs'
 
 // const parsePullRequestId = (githubRef?: string): string => {
@@ -77,7 +77,7 @@ async function main(): Promise<void> {
     await execSync(
       `npm run merge  -- --report ./jest-coverage-full/coverage-final.json`
     )
-    await mergeJestCypressCoverage(['jest-coverage-full/coverage-summary.json'])
+    // await mergeJestCypressCoverage(['jest-coverage-full/coverage-summary.json'])
     const jestFullCodeCoverageSummaryNew1 = await JSON.parse(
       fs.readFileSync('coverage/coverage-summary.json').toString()
     )
