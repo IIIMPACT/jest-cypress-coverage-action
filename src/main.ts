@@ -12,7 +12,7 @@ const fs = require('fs')
 const fs1 = require('fs-extra')
 
 // const createCoverageMap = require('istanbul-lib-coverage').createCoverageMap
-const {createReporter} = require('istanbul-api')
+// const {createReporter} = require('istanbul-api')
 
 const {exec} = require('child_process')
 
@@ -53,6 +53,7 @@ async function mergeJestCypressCoverage(
   baseRef?: string
 ): Promise<void> {
   console.log('changedSince', baseRef)
+  console.log('reporters', reporters)
 
   // const map = createCoverageMap({})
 
@@ -95,8 +96,8 @@ async function mergeJestCypressCoverage(
     // map.merge(o)
   }
 
-  const reporter = createReporter()
-  reporter.addAll(reporters)
+  // const reporter = createReporter()
+  // reporter.addAll(reporters)
   // reporter.write(map)
 }
 
