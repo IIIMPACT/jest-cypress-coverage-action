@@ -7,6 +7,12 @@ const core = require('@actions/core')
 const execSync = require('child_process').execSync
 // const fs = require('fs-extra')
 const fs = require('fs')
+
+const {createCoverageMap} = require('istanbul-lib-coverage')
+console.log('createCoverageMap: ', createCoverageMap)
+const {createReporter} = require('istanbul-api')
+console.log('createReporter: ', createReporter)
+
 // const DiffChecker = require('./DiffChecker').DiffChecker
 const {merge: mergeJestCypressCoverage} = require('./mergeJestCypressCoverage')
 // import fs from 'fs'
