@@ -76,12 +76,16 @@ async function main(): Promise<void> {
       'jestFullCodeCoverageSummaryNew:',
       jestFullCodeCoverageSummaryNew
     )
+    const cypressCodeCoverageNew = await JSON.parse(
+      fs.readFileSync('./.nyc_output/out.json').toString()
+    )
+    console.log('cypressCodeCoverageNew:', cypressCodeCoverageNew)
 
     //write jestFullCodeCoverageSummaryNew to fs
+    // Full coverage
     await execSync(
-      `npm run merge  -- --report ./jest-coverage-full/coverage-final.json`
+      `npm run merge  -- --report ./jest-coverage-full/coverage-final.json --report ./.nyc_output/out.json`
     )
-    // await mergeJestCypressCoverage(['jest-coverage-full/coverage-summary.json'])
     const jestFullCodeCoverageNew1 = await JSON.parse(
       fs.readFileSync('coverage/coverage-final.json').toString()
     )
@@ -92,6 +96,22 @@ async function main(): Promise<void> {
     console.log(
       'jestFullCodeCoverageSummaryNew1:',
       jestFullCodeCoverageSummaryNew1
+    )
+
+    // Diff coverage
+    await execSync(
+      `npm run merge  -- --report ./jest-coverage-full/coverage-final.json --report ./.nyc_output/out.json --changedSince=origin/development`
+    )
+    const jestFullCodeCoverageNew2 = await JSON.parse(
+      fs.readFileSync('coverage/coverage-final.json').toString()
+    )
+    console.log('jestFullCodeCoverageNew2:', jestFullCodeCoverageNew2)
+    const jestFullCodeCoverageSummaryNew2 = await JSON.parse(
+      fs.readFileSync('coverage/coverage-summary.json').toString()
+    )
+    console.log(
+      'jestFullCodeCoverageSummaryNew2:',
+      jestFullCodeCoverageSummaryNew2
     )
 
     // TODO

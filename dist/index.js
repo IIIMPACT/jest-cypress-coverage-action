@@ -5823,13 +5823,21 @@ function main() {
             console.log('jestFullCodeCoverageNew:', jestFullCodeCoverageNew);
             const jestFullCodeCoverageSummaryNew = yield JSON.parse(fs.readFileSync('jest-coverage-full/coverage-summary.json').toString());
             console.log('jestFullCodeCoverageSummaryNew:', jestFullCodeCoverageSummaryNew);
+            const cypressCodeCoverageNew = yield JSON.parse(fs.readFileSync('./.nyc_output/out.json').toString());
+            console.log('cypressCodeCoverageNew:', cypressCodeCoverageNew);
             //write jestFullCodeCoverageSummaryNew to fs
-            yield execSync(`npm run merge  -- --report ./jest-coverage-full/coverage-final.json`);
-            // await mergeJestCypressCoverage(['jest-coverage-full/coverage-summary.json'])
+            // Full coverage
+            yield execSync(`npm run merge  -- --report ./jest-coverage-full/coverage-final.json --report ./.nyc_output/out.json`);
             const jestFullCodeCoverageNew1 = yield JSON.parse(fs.readFileSync('coverage/coverage-final.json').toString());
             console.log('jestFullCodeCoverageNew1:', jestFullCodeCoverageNew1);
             const jestFullCodeCoverageSummaryNew1 = yield JSON.parse(fs.readFileSync('coverage/coverage-summary.json').toString());
             console.log('jestFullCodeCoverageSummaryNew1:', jestFullCodeCoverageSummaryNew1);
+            // Diff coverage
+            yield execSync(`npm run merge  -- --report ./jest-coverage-full/coverage-final.json --report ./.nyc_output/out.json --changedSince=origin/development`);
+            const jestFullCodeCoverageNew2 = yield JSON.parse(fs.readFileSync('coverage/coverage-final.json').toString());
+            console.log('jestFullCodeCoverageNew2:', jestFullCodeCoverageNew2);
+            const jestFullCodeCoverageSummaryNew2 = yield JSON.parse(fs.readFileSync('coverage/coverage-summary.json').toString());
+            console.log('jestFullCodeCoverageSummaryNew2:', jestFullCodeCoverageSummaryNew2);
             // TODO
             // 1. get summary of PR pull request and test this against threshold
             // 2. get coverage diff and display
