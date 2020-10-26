@@ -5,12 +5,13 @@
 /* eslint-disable no-console */
 // const github = require('@actions/github')
 const core = require('@actions/core')
+const actionsExec = require('@actions/exec')
 const execSync = require('child_process').execSync
 // const fs = require('fs-extra')
 const fs = require('fs')
 const fs1 = require('fs-extra')
 
-const {createCoverageMap} = require('istanbul-lib-coverage')
+const createCoverageMap = require('istanbul-lib-coverage').createCoverageMap
 const {createReporter} = require('istanbul-api')
 
 const {exec} = require('child_process')
@@ -144,6 +145,7 @@ async function main(): Promise<void> {
     // await execSync('git stash')
     // await execSync(`git checkout --progress --force ${branchNameBase}`)
     await execSync('npm run test:all')
+    await actionsExec('echo', 'right here')
     const jestFullCodeCoverageSummaryNew = await JSON.parse(
       fs.readFileSync('jest-coverage-full/coverage-summary.json').toString()
     )
