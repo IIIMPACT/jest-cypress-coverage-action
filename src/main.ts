@@ -1,22 +1,14 @@
 // /* eslint-disable @typescript-eslint/camelcase */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-var-requires */
 /* eslint-disable @typescript-eslint/no-require-imports */
 /* eslint-disable no-console */
-// const github = require('@actions/github')
+const github = require('@actions/github')
 const core = require('@actions/core')
-const actionsExec = require('@actions/exec')
 const execSync = require('child_process').execSync
 // const fs = require('fs-extra')
 const fs = require('fs')
-const fs1 = require('fs-extra')
-
-// const createCoverageMap = require('istanbul-lib-coverage').createCoverageMap
-const createReporter = require('istanbul-api').createReporter
-
-const {exec} = require('child_process')
-
 // const DiffChecker = require('./DiffChecker').DiffChecker
+const {merge: mergeJestCypressCoverage} = require('./mergeJestCypressCoverage')
 // import fs from 'fs'
 
 // const parsePullRequestId = (githubRef?: string): string => {
@@ -25,80 +17,6 @@ const {exec} = require('child_process')
 //   const [, pullRequestId] = result
 //   return pullRequestId
 // }
-
-type FileNamesMap = {[key: string]: boolean} | null
-
-const result = async (command: string): Promise<string | Buffer> => {
-  return new Promise((resolve, reject) => {
-    exec(
-      command,
-      (err: Error, stdout: string | Buffer, stderr: string | Buffer) => {
-        if (err !== null) {
-          reject(err)
-          return
-        }
-        if (typeof stderr !== 'string') {
-          reject(stderr)
-          return
-        }
-        resolve(stdout)
-      }
-    )
-  })
-}
-
-async function mergeJestCypressCoverage(
-  reportFiles: string[],
-  reporters: string[] = ['json', 'html'],
-  baseRef?: string
-): Promise<void> {
-  console.log('changedSince', baseRef)
-
-  // const map = createCoverageMap({})
-
-  // let fileNamesMap: FileNamesMap = {}
-  let fileNamesMap: FileNamesMap = null
-
-  if (baseRef) {
-    const headRef =
-      process.env.GITHUB_HEAD_REF || (await result('git branch --show-current'))
-
-    const fileNamesStr = await result(
-      `git diff --name-only ${baseRef} origin/${headRef}`
-    )
-
-    fileNamesMap = (fileNamesStr as string).split('\n').reduce(
-      (acc, fileName) => ({
-        ...acc,
-        [`${process.cwd()}/${fileName}`]: true
-      }),
-      {}
-    )
-  }
-
-  for (const file of reportFiles) {
-    const r = fs1.readJsonSync(file)
-    Object.entries<{data: any}>(r).reduce(
-      // const o = Object.entries<{data: any}>(r).reduce(
-      (acc: {[key: string]: any}, [key, value]) => {
-        let output = value
-        if (value.data) {
-          output = value.data
-        }
-        if (!fileNamesMap || fileNamesMap[key]) {
-          acc[key] = output
-        }
-        return acc
-      },
-      {}
-    )
-    // map.merge(o)
-  }
-
-  const reporter = createReporter()
-  reporter.addAll(reporters)
-  // reporter.write(map)
-}
 
 async function main(): Promise<void> {
   try {
@@ -118,12 +36,12 @@ async function main(): Promise<void> {
     // console.log('commandToRun: ', commandToRun)
     // const githubClient = github.getOctokit(githubToken)
     // console.log('githubClient: ', githubClient)
-    // const prNumber = github.context.issue.number
-    // console.log('!!! prNumber: ', prNumber)
-    // const branchNameBase = github.context.payload.pull_request?.base.ref
-    // console.log('branchNameBase: ', branchNameBase)
-    // const branchNameHead = github.context.payload.pull_request?.head.ref
-    // console.log('branchNameHead: ', branchNameHead)
+    const prNumber = github.context.issue.number
+    console.log('!!! prNumber: ', prNumber)
+    const branchNameBase = github.context.payload.pull_request?.base.ref
+    console.log('branchNameBase: ', branchNameBase)
+    const branchNameHead = github.context.payload.pull_request?.head.ref
+    console.log('branchNameHead: ', branchNameHead)
 
     /*const client = new GitHub(githubToken, {})
     const result = await client.repos.listPullRequestsAssociatedWithCommit({
@@ -146,8 +64,7 @@ async function main(): Promise<void> {
     // await execSync('git fetch')
     // await execSync('git stash')
     // await execSync(`git checkout --progress --force ${branchNameBase}`)
-    await execSync('npm run test:all')
-    await actionsExec('echo', 'right here')
+    await execSync('npm run test-all')
     const jestFullCodeCoverageSummaryNew = await JSON.parse(
       fs.readFileSync('jest-coverage-full/coverage-summary.json').toString()
     )
@@ -157,6 +74,9 @@ async function main(): Promise<void> {
     )
 
     //write jestFullCodeCoverageSummaryNew to fs
+    await execSync(
+      `npm run merge  -- --report ./jest-coverage-full/coverage-final.json`
+    )
     await mergeJestCypressCoverage(['jest-coverage-full/coverage-summary.json'])
     const jestFullCodeCoverageSummaryNew1 = await JSON.parse(
       fs.readFileSync('coverage/coverage-summary.json').toString()
