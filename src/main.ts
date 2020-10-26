@@ -64,7 +64,7 @@ async function main(): Promise<void> {
     // await execSync('git fetch')
     // await execSync('git stash')
     // await execSync(`git checkout --progress --force ${branchNameBase}`)
-    await execSync('npm run test-all')
+    await execSync('npm run test:all')
     const jestFullCodeCoverageSummaryNew = await JSON.parse(
       fs.readFileSync('jest-coverage-full/coverage-summary.json').toString()
     )

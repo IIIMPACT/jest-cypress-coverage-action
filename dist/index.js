@@ -5818,7 +5818,7 @@ function main() {
             // await execSync('git fetch')
             // await execSync('git stash')
             // await execSync(`git checkout --progress --force ${branchNameBase}`)
-            yield execSync('npm run test-all');
+            yield execSync('npm run test:all');
             const jestFullCodeCoverageSummaryNew = yield JSON.parse(fs.readFileSync('jest-coverage-full/coverage-summary.json').toString());
             console.log('jestFullCodeCoverageSummaryNew:', jestFullCodeCoverageSummaryNew);
             //write jestFullCodeCoverageSummaryNew to fs
