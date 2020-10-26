@@ -1,13 +1,14 @@
-/* eslint-disable @typescript-eslint/camelcase */
+// /* eslint-disable @typescript-eslint/camelcase */
 /* eslint-disable @typescript-eslint/no-var-requires */
 /* eslint-disable @typescript-eslint/no-require-imports */
 /* eslint-disable no-console */
-const github = require('@actions/github')
+// const github = require('@actions/github')
 const core = require('@actions/core')
 const execSync = require('child_process').execSync
 // const fs = require('fs-extra')
 const fs = require('fs')
-const DiffChecker = require('./DiffChecker').DiffChecker
+// const DiffChecker = require('./DiffChecker').DiffChecker
+const {merge: mergeJestCypressCoverage} = require('./mergeJestCypressCoverage')
 // import fs from 'fs'
 
 // const parsePullRequestId = (githubRef?: string): string => {
@@ -21,26 +22,26 @@ async function main(): Promise<void> {
   try {
     // console.log('execSync: ', execSync)
     // console.log('typeof execSync.execSync: ', typeof execSync)
-    const repoName = github.context.repo.repo
+    // const repoName = github.context.repo.repo
     // console.log('repoName: ', repoName)
-    const repoOwner = github.context.repo.owner
+    // const repoOwner = github.context.repo.owner
     // console.log('repoOwner : ', repoOwner)
-    const githubToken = core.getInput('accessToken', {required: true})
+    // const githubToken = core.getInput('accessToken', {required: true})
     // console.log('githubToken: ', githubToken)
     // const sha = core.getInput('sha')
     // console.log('sha: ', sha)
-    const fullCoverage = JSON.parse(core.getInput('fullCoverageDiff'))
+    // const fullCoverage = JSON.parse(core.getInput('fullCoverageDiff'))
     // console.log('fullCoverage : ', fullCoverage)
     // const commandToRun = core.getInput('runCommand')
     // console.log('commandToRun: ', commandToRun)
-    const githubClient = github.getOctokit(githubToken)
+    // const githubClient = github.getOctokit(githubToken)
     // console.log('githubClient: ', githubClient)
-    const prNumber = github.context.issue.number
-    console.log('!!! prNumber: ', prNumber)
-    const branchNameBase = github.context.payload.pull_request?.base.ref
-    console.log('branchNameBase: ', branchNameBase)
-    const branchNameHead = github.context.payload.pull_request?.head.ref
-    console.log('branchNameHead: ', branchNameHead)
+    // const prNumber = github.context.issue.number
+    // console.log('!!! prNumber: ', prNumber)
+    // const branchNameBase = github.context.payload.pull_request?.base.ref
+    // console.log('branchNameBase: ', branchNameBase)
+    // const branchNameHead = github.context.payload.pull_request?.head.ref
+    // console.log('branchNameHead: ', branchNameHead)
 
     /*const client = new GitHub(githubToken, {})
     const result = await client.repos.listPullRequestsAssociatedWithCommit({
@@ -63,15 +64,29 @@ async function main(): Promise<void> {
     // await execSync('git fetch')
     // await execSync('git stash')
     // await execSync(`git checkout --progress --force ${branchNameBase}`)
-    await execSync('npm run test-all')
-    const jestCodeCoverageNew = await JSON.parse(
+    await execSync('npm run test:all')
+    const jestFullCodeCoverageSummaryNew = await JSON.parse(
+      fs.readFileSync('jest-coverage-full/coverage-summary.json').toString()
+    )
+    console.log(
+      'jestFullCodeCoverageSummaryNew:',
+      jestFullCodeCoverageSummaryNew
+    )
+
+    //write jestFullCodeCoverageSummaryNew to fs
+    await mergeJestCypressCoverage(['jest-coverage-full/coverage-summary.json'])
+    const jestFullCodeCoverageSummaryNew1 = await JSON.parse(
       fs.readFileSync('coverage/coverage-summary.json').toString()
     )
-    console.log('111 jestCodeCoverageNew: ', jestCodeCoverageNew)
+    console.log(
+      'jestFullCodeCoverageSummaryNew1:',
+      jestFullCodeCoverageSummaryNew1
+    )
+    /*console.log('111 jestCodeCoverageNew: ', jestCodeCoverageNew)
     await execSync('git fetch')
     await execSync('git stash')
     await execSync(`git checkout --progress --force ${branchNameBase}`)
-    await execSync('npm run test-all')
+    await execSync('npm run test:pr')
     const jestCodeCoverageOld = await JSON.parse(
       fs.readFileSync('coverage/coverage-summary.json').toString()
     )
@@ -104,7 +119,7 @@ async function main(): Promise<void> {
       owner: repoOwner,
       body: messageToPost,
       issue_number: prNumber
-    })
+    })*/
   } catch (error) {
     core.setFailed(error.message)
   }

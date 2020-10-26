@@ -37,7 +37,10 @@
   "dependencies": {
     "@actions/core": "^1.2.4",
     "@actions/github": "^4.0.0",
-    "fs-extra": "^9.0.1"
+    "fs-extra": "^9.0.1",
+    "istanbul-api": "^3.0.0",
+    "istanbul-lib-coverage": "^3.0.0",
+    "yargs": "^16.1.0"
   },
   "devDependencies": {
     "@types/jest": "^24.9.1",

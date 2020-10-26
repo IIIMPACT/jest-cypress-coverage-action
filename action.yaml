@@ -10,6 +10,14 @@ inputs:
     description: 'access token required to comment on a pr'
     required: false
     default: ${{ github.token }}
+  fullCoverageReports:
+    description: 'JSON array of paths to full coverage reports'
+    required: false
+    default: '[]'
+  summaryCoverageReports:
+    description: 'JSON array of paths to summary coverage reports'
+    required: false
+    default: '[]'
   fullCoverageDiff:
     description: 'get the full coverage with diff or only the diff'
     required: false
