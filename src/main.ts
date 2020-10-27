@@ -31,7 +31,7 @@ async function main(): Promise<void> {
     const githubToken = core.getInput('accessToken', {required: true})
     const githubClient = github.getOctokit(githubToken)
     const prNumber = github.context.issue.number
-    const branchNameBase = 'feat/HR-1715/add-new-test-scripts'
+    const branchNameBase = github.context.payload.pull_request?.base.ref
     const branchNameHead = github.context.payload.pull_request?.head.ref
     console.log('repoName: ', repoName)
     console.log('repoOwner : ', repoOwner)
