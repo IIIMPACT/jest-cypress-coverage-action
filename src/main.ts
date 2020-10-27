@@ -1,4 +1,4 @@
-// /* eslint-disable @typescript-eslint/camelcase */
+/* eslint-disable @typescript-eslint/camelcase */
 /* eslint-disable @typescript-eslint/no-var-requires */
 /* eslint-disable @typescript-eslint/no-require-imports */
 /* eslint-disable no-console */
@@ -7,7 +7,7 @@ const core = require('@actions/core')
 const execSync = require('child_process').execSync
 // const fs = require('fs-extra')
 const fs = require('fs')
-// const DiffChecker = require('./DiffChecker').DiffChecker
+const DiffChecker = require('./DiffChecker').DiffChecker
 // const {merge: mergeJestCypressCoverage} = require('./mergeJestCypressCoverage')
 // import fs from 'fs'
 
@@ -20,27 +20,23 @@ const fs = require('fs')
 
 async function main(): Promise<void> {
   try {
-    // console.log('execSync: ', execSync)
-    // console.log('typeof execSync.execSync: ', typeof execSync)
-    // const repoName = github.context.repo.repo
-    // console.log('repoName: ', repoName)
-    // const repoOwner = github.context.repo.owner
-    // console.log('repoOwner : ', repoOwner)
-    // const githubToken = core.getInput('accessToken', {required: true})
-    // console.log('githubToken: ', githubToken)
     // const sha = core.getInput('sha')
-    // console.log('sha: ', sha)
     // const fullCoverage = JSON.parse(core.getInput('fullCoverageDiff'))
-    // console.log('fullCoverage : ', fullCoverage)
     // const commandToRun = core.getInput('runCommand')
+    // console.log('sha: ', sha)
+    // console.log('fullCoverage : ', fullCoverage)
     // console.log('commandToRun: ', commandToRun)
-    // const githubClient = github.getOctokit(githubToken)
-    // console.log('githubClient: ', githubClient)
+    const repoName = github.context.repo.repo
+    const repoOwner = github.context.repo.owner
+    const githubToken = core.getInput('accessToken', {required: true})
+    const githubClient = github.getOctokit(githubToken)
     const prNumber = github.context.issue.number
-    console.log('!!! prNumber: ', prNumber)
     const branchNameBase = github.context.payload.pull_request?.base.ref
-    console.log('branchNameBase: ', branchNameBase)
     const branchNameHead = github.context.payload.pull_request?.head.ref
+    console.log('repoName: ', repoName)
+    console.log('repoOwner : ', repoOwner)
+    console.log('prNumber: ', prNumber)
+    console.log('branchNameBase: ', branchNameBase)
     console.log('branchNameHead: ', branchNameHead)
 
     /*const client = new GitHub(githubToken, {})
@@ -64,6 +60,9 @@ async function main(): Promise<void> {
     // await execSync('git fetch')
     // await execSync('git stash')
     // await execSync(`git checkout --progress --force ${branchNameBase}`)
+
+    // Full coverage
+    // 1 Get full code coverage current
     await execSync('npm run test:cypress:staging & test:all') // should include cypress here or add it as separate
     const jestFullCodeCoverageNew = await JSON.parse(
       fs.readFileSync('jest-coverage-full/coverage-final.json').toString()
@@ -81,8 +80,7 @@ async function main(): Promise<void> {
     )
     console.log('cypressCodeCoverageNew:', cypressCodeCoverageNew)
 
-    //write jestFullCodeCoverageSummaryNew to fs
-    // Full coverage
+    // 1.b Merge coverages
     await execSync(
       `npm run merge  -- --report ./jest-coverage-full/coverage-final.json --report ./.nyc_output/out.json`
     )
@@ -99,6 +97,7 @@ async function main(): Promise<void> {
     )
 
     // Diff coverage
+    // 2. get coverage on changed files of PR pull request and test this against threshold
     await execSync(
       `npm run merge  -- --report ./jest-coverage-full/coverage-final.json --report ./.nyc_output/out.json --changedSince=origin/development`
     )
@@ -114,29 +113,47 @@ async function main(): Promise<void> {
       jestFullCodeCoverageSummaryNew2
     )
 
-    // TODO
-    // 1. get summary of PR pull request and test this against threshold
+    // 3 Checkout dev
     // 2. get coverage diff and display
-
-    /*console.log('111 jestCodeCoverageNew: ', jestCodeCoverageNew)
     await execSync('git fetch')
     await execSync('git stash')
     await execSync(`git checkout --progress --force ${branchNameBase}`)
-    await execSync('npm run test:pr')
-    const jestCodeCoverageOld = await JSON.parse(
+    await execSync('npm run test:cypress:staging & test:all')
+    const jestFullCodeCoverageOld = await JSON.parse(
+      fs.readFileSync('jest-coverage-full/coverage-final.json').toString()
+    )
+    console.log('jestFullCodeCoverageOld: ', jestFullCodeCoverageOld)
+    const jestFullCodeCoverageSummaryOld = await JSON.parse(
+      fs.readFileSync('jest-coverage-full/coverage-summary.json').toString()
+    )
+    console.log('jestFullCodeCoverageOld: ', jestFullCodeCoverageSummaryOld)
+
+    // 2. get coverage on changed files of PR pull request and test this against threshold
+    await execSync(
+      `npm run merge  -- --report ./jest-coverage-full/coverage-final.json --report ./.nyc_output/out.json`
+    )
+    const jestFullCodeCoverageOld1 = await JSON.parse(
+      fs.readFileSync('coverage/coverage-final.json').toString()
+    )
+    console.log('jestFullCodeCoverageOld1:', jestFullCodeCoverageOld1)
+    const jestFullCodeCoverageSummaryOld1 = await JSON.parse(
       fs.readFileSync('coverage/coverage-summary.json').toString()
     )
-    console.log('111 jestCodeCoverageOld: ', jestCodeCoverageOld)
+    console.log(
+      'jestFullCodeCoverageSummaryOld1:',
+      jestFullCodeCoverageSummaryOld1
+    )
+
     const currentDirectory = await execSync('pwd')
       .toString()
       .trim()
-    console.log('111 currentDirectory: ', currentDirectory)
     const diffChecker = new DiffChecker(
-      jestCodeCoverageNew,
-      jestCodeCoverageOld
+      jestFullCodeCoverageNew1,
+      jestFullCodeCoverageOld1
     )
+
     let messageToPost = `Code coverage diff between base branch:${branchNameBase} and head branch: ${branchNameHead} \n`
-    // console.log('messageToPost: ', messageToPost)
+    const fullCoverage = true
     const coverageDetails = diffChecker.getCoverageDetails(
       !fullCoverage,
       `${currentDirectory}/`
@@ -155,7 +172,7 @@ async function main(): Promise<void> {
       owner: repoOwner,
       body: messageToPost,
       issue_number: prNumber
-    })*/
+    })
   } catch (error) {
     core.setFailed(error.message)
   }
