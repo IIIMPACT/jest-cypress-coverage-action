@@ -64,7 +64,7 @@ async function main(): Promise<void> {
     // await execSync('git fetch')
     // await execSync('git stash')
     // await execSync(`git checkout --progress --force ${branchNameBase}`)
-    await execSync('npm run test:all & test:cypress:staging') // should include cypress here or add it as separate
+    await execSync('npm run test:cypress:staging & test:all') // should include cypress here or add it as separate
     const jestFullCodeCoverageNew = await JSON.parse(
       fs.readFileSync('jest-coverage-full/coverage-final.json').toString()
     )
