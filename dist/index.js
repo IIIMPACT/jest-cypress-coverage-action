@@ -5919,7 +5919,7 @@ function main() {
             // await execSync(`git checkout --progress --force ${branchNameBase}`)
             // Full coverage
             // 1 Get full code coverage current
-            yield execSync('npm run test:cypress:staging & test:all'); // should include cypress here or add it as separate
+            yield execSync('npm run test:cypress:staging & npm run test:all'); // should include cypress here or add it as separate
             const jestFullCodeCoverageNew = yield JSON.parse(fs.readFileSync('jest-coverage-full/coverage-final.json').toString());
             console.log('jestFullCodeCoverageNew:', jestFullCodeCoverageNew);
             const jestFullCodeCoverageSummaryNew = yield JSON.parse(fs.readFileSync('jest-coverage-full/coverage-summary.json').toString());
@@ -5944,7 +5944,7 @@ function main() {
             yield execSync('git fetch');
             yield execSync('git stash');
             yield execSync(`git checkout --progress --force ${branchNameBase}`);
-            yield execSync('npm run test:cypress:staging & test:all');
+            yield execSync('npm run test:cypress:staging & npm run test:all');
             const jestFullCodeCoverageOld = yield JSON.parse(fs.readFileSync('jest-coverage-full/coverage-final.json').toString());
             console.log('jestFullCodeCoverageOld: ', jestFullCodeCoverageOld);
             const jestFullCodeCoverageSummaryOld = yield JSON.parse(fs.readFileSync('jest-coverage-full/coverage-summary.json').toString());

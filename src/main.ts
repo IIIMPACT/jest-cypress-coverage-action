@@ -63,7 +63,7 @@ async function main(): Promise<void> {
 
     // Full coverage
     // 1 Get full code coverage current
-    await execSync('npm run test:cypress:staging & test:all') // should include cypress here or add it as separate
+    await execSync('npm run test:cypress:staging & npm run test:all') // should include cypress here or add it as separate
     const jestFullCodeCoverageNew = await JSON.parse(
       fs.readFileSync('jest-coverage-full/coverage-final.json').toString()
     )
@@ -118,7 +118,7 @@ async function main(): Promise<void> {
     await execSync('git fetch')
     await execSync('git stash')
     await execSync(`git checkout --progress --force ${branchNameBase}`)
-    await execSync('npm run test:cypress:staging & test:all')
+    await execSync('npm run test:cypress:staging & npm run test:all')
     const jestFullCodeCoverageOld = await JSON.parse(
       fs.readFileSync('jest-coverage-full/coverage-final.json').toString()
     )
