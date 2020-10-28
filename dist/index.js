@@ -5920,23 +5920,29 @@ function main() {
             // Full coverage
             // 1 Get full code coverage current
             yield execSync('npm run test:cypress:staging & npm run test:all'); // should include cypress here or add it as separate
-            const jestFullCodeCoverageNew = yield JSON.parse(fs.readFileSync('jest-coverage-full/coverage-final.json').toString());
-            console.log('jestFullCodeCoverageNew:', jestFullCodeCoverageNew);
+            // const jestFullCodeCoverageNew = await JSON.parse(
+            //   fs.readFileSync('jest-coverage-full/coverage-final.json').toString()
+            // )
+            // console.log('jestFullCodeCoverageNew:', jestFullCodeCoverageNew)
             const jestFullCodeCoverageSummaryNew = yield JSON.parse(fs.readFileSync('jest-coverage-full/coverage-summary.json').toString());
             console.log('jestFullCodeCoverageSummaryNew:', jestFullCodeCoverageSummaryNew);
-            const cypressCodeCoverageNew = yield JSON.parse(fs.readFileSync('./.nyc_output/out.json').toString());
-            console.log('cypressCodeCoverageNew:', cypressCodeCoverageNew);
+            // const cypressCodeCoverageNew = await JSON.parse(
+            //   fs.readFileSync('./.nyc_output/out.json').toString()
+            // )
+            // console.log('cypressCodeCoverageNew:', cypressCodeCoverageNew)
             // 1.b Merge coverages
             yield execSync(`npm run merge  -- --report ./jest-coverage-full/coverage-final.json --report ./.nyc_output/out.json`);
             const jestFullCodeCoverageNew1 = yield JSON.parse(fs.readFileSync('coverage/coverage-final.json').toString());
-            console.log('jestFullCodeCoverageNew1:', jestFullCodeCoverageNew1);
+            // console.log('jestFullCodeCoverageNew1:', jestFullCodeCoverageNew1)
             const jestFullCodeCoverageSummaryNew1 = yield JSON.parse(fs.readFileSync('coverage/coverage-summary.json').toString());
             console.log('jestFullCodeCoverageSummaryNew1:', jestFullCodeCoverageSummaryNew1);
             // Diff coverage
             // 2. get coverage on changed files of PR pull request and test this against threshold
             yield execSync(`npm run merge  -- --report ./jest-coverage-full/coverage-final.json --report ./.nyc_output/out.json --changedSince=${branchNameBase}`);
-            const jestFullCodeCoverageNew2 = yield JSON.parse(fs.readFileSync('coverage/coverage-final.json').toString());
-            console.log('jestFullCodeCoverageNew2:', jestFullCodeCoverageNew2);
+            // const jestFullCodeCoverageNew2 = await JSON.parse(
+            //   fs.readFileSync('coverage/coverage-final.json').toString()
+            // )
+            // console.log('jestFullCodeCoverageNew2:', jestFullCodeCoverageNew2)
             const jestFullCodeCoverageSummaryNew2 = yield JSON.parse(fs.readFileSync('coverage/coverage-summary.json').toString());
             console.log('jestFullCodeCoverageSummaryNew2:', jestFullCodeCoverageSummaryNew2);
             // 3 Checkout dev
@@ -5945,14 +5951,16 @@ function main() {
             yield execSync('git stash');
             yield execSync(`git checkout --progress --force ${branchNameBase}`);
             yield execSync('npm run test:cypress:staging & npm run test:all');
-            const jestFullCodeCoverageOld = yield JSON.parse(fs.readFileSync('jest-coverage-full/coverage-final.json').toString());
-            console.log('jestFullCodeCoverageOld: ', jestFullCodeCoverageOld);
+            // const jestFullCodeCoverageOld = await JSON.parse(
+            //   fs.readFileSync('jest-coverage-full/coverage-final.json').toString()
+            // )
+            // console.log('jestFullCodeCoverageOld: ', jestFullCodeCoverageOld)
             const jestFullCodeCoverageSummaryOld = yield JSON.parse(fs.readFileSync('jest-coverage-full/coverage-summary.json').toString());
             console.log('jestFullCodeCoverageOld: ', jestFullCodeCoverageSummaryOld);
             // 2. get coverage on changed files of PR pull request and test this against threshold
             yield execSync(`npm run merge  -- --report ./jest-coverage-full/coverage-final.json --report ./.nyc_output/out.json`);
             const jestFullCodeCoverageOld1 = yield JSON.parse(fs.readFileSync('coverage/coverage-final.json').toString());
-            console.log('jestFullCodeCoverageOld1:', jestFullCodeCoverageOld1);
+            // console.log('jestFullCodeCoverageOld1:', jestFullCodeCoverageOld1)
             const jestFullCodeCoverageSummaryOld1 = yield JSON.parse(fs.readFileSync('coverage/coverage-summary.json').toString());
             console.log('jestFullCodeCoverageSummaryOld1:', jestFullCodeCoverageSummaryOld1);
             const currentDirectory = yield execSync('pwd')
