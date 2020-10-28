@@ -60,14 +60,18 @@ async function main(): Promise<void> {
     // await execSync('git fetch')
     // await execSync('git stash')
     // await execSync(`git checkout --progress --force ${branchNameBase}`)
+    const lis = await execSync(
+      `git diff --name-only origin/${branchNameBase} origin/${branchNameBase}`
+    )
+    console.log('lis', lis)
 
     // Full coverage
     // 1 Get full code coverage current
     await execSync('npm run test:cypress:staging & npm run test:all') // should include cypress here or add it as separate
-    const jestFullCodeCoverageNew = await JSON.parse(
-      fs.readFileSync('jest-coverage-full/coverage-final.json').toString()
-    )
-    console.log('jestFullCodeCoverageNew:', jestFullCodeCoverageNew)
+    // const jestFullCodeCoverageNew = await JSON.parse(
+    //   fs.readFileSync('jest-coverage-full/coverage-final.json').toString()
+    // )
+    // console.log('jestFullCodeCoverageNew:', jestFullCodeCoverageNew)
     const jestFullCodeCoverageSummaryNew = await JSON.parse(
       fs.readFileSync('jest-coverage-full/coverage-summary.json').toString()
     )
@@ -84,10 +88,10 @@ async function main(): Promise<void> {
     await execSync(
       `npm run merge  -- --report ./jest-coverage-full/coverage-final.json --report ./.nyc_output/out.json`
     )
-    const jestFullCodeCoverageNew1 = await JSON.parse(
-      fs.readFileSync('coverage/coverage-final.json').toString()
-    )
-    console.log('jestFullCodeCoverageNew1:', jestFullCodeCoverageNew1)
+    // const jestFullCodeCoverageNew1 = await JSON.parse(
+    //   fs.readFileSync('coverage/coverage-final.json').toString()
+    // )
+    // console.log('jestFullCodeCoverageNew1:', jestFullCodeCoverageNew1)
     const jestFullCodeCoverageSummaryNew1 = await JSON.parse(
       fs.readFileSync('coverage/coverage-summary.json').toString()
     )
@@ -101,10 +105,10 @@ async function main(): Promise<void> {
     await execSync(
       `npm run merge  -- --report ./jest-coverage-full/coverage-final.json --report ./.nyc_output/out.json --changedSince=${branchNameBase}`
     )
-    const jestFullCodeCoverageNew2 = await JSON.parse(
-      fs.readFileSync('coverage/coverage-final.json').toString()
-    )
-    console.log('jestFullCodeCoverageNew2:', jestFullCodeCoverageNew2)
+    // const jestFullCodeCoverageNew2 = await JSON.parse(
+    //   fs.readFileSync('coverage/coverage-final.json').toString()
+    // )
+    // console.log('jestFullCodeCoverageNew2:', jestFullCodeCoverageNew2)
     const jestFullCodeCoverageSummaryNew2 = await JSON.parse(
       fs.readFileSync('coverage/coverage-summary.json').toString()
     )
@@ -119,10 +123,10 @@ async function main(): Promise<void> {
     await execSync('git stash')
     await execSync(`git checkout --progress --force ${branchNameBase}`)
     await execSync('npm run test:cypress:staging & npm run test:all')
-    const jestFullCodeCoverageOld = await JSON.parse(
-      fs.readFileSync('jest-coverage-full/coverage-final.json').toString()
-    )
-    console.log('jestFullCodeCoverageOld: ', jestFullCodeCoverageOld)
+    // const jestFullCodeCoverageOld = await JSON.parse(
+    //   fs.readFileSync('jest-coverage-full/coverage-final.json').toString()
+    // )
+    // console.log('jestFullCodeCoverageOld: ', jestFullCodeCoverageOld)
     const jestFullCodeCoverageSummaryOld = await JSON.parse(
       fs.readFileSync('jest-coverage-full/coverage-summary.json').toString()
     )
@@ -132,10 +136,10 @@ async function main(): Promise<void> {
     await execSync(
       `npm run merge  -- --report ./jest-coverage-full/coverage-final.json --report ./.nyc_output/out.json`
     )
-    const jestFullCodeCoverageOld1 = await JSON.parse(
-      fs.readFileSync('coverage/coverage-final.json').toString()
-    )
-    console.log('jestFullCodeCoverageOld1:', jestFullCodeCoverageOld1)
+    // const jestFullCodeCoverageOld1 = await JSON.parse(
+    //   fs.readFileSync('coverage/coverage-final.json').toString()
+    // )
+    // console.log('jestFullCodeCoverageOld1:', jestFullCodeCoverageOld1)
     const jestFullCodeCoverageSummaryOld1 = await JSON.parse(
       fs.readFileSync('coverage/coverage-summary.json').toString()
     )
@@ -148,8 +152,10 @@ async function main(): Promise<void> {
       .toString()
       .trim()
     const diffChecker = new DiffChecker(
-      jestFullCodeCoverageNew1,
-      jestFullCodeCoverageOld1
+      // jestFullCodeCoverageNew1,
+      // jestFullCodeCoverageOld1
+      jestFullCodeCoverageSummaryNew1,
+      jestFullCodeCoverageSummaryOld1
     )
 
     let messageToPost = `Code coverage diff between base branch:${branchNameBase} and head branch: ${branchNameHead} \n`
