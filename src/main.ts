@@ -62,7 +62,7 @@ async function main(): Promise<void> {
     // await execSync(`git checkout --progress --force ${branchNameBase}`)
     console.log('lis before')
     const lis = await execSync(
-      `git diff --name-only origin/${branchNameBase}@v1.3.0 origin/${branchNameHead}`
+      `git diff --name-only origin/${branchNameBase}/HEAD origin/${branchNameHead}`
     )
     console.log('lis', lis)
 
