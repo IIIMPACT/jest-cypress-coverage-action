@@ -61,8 +61,9 @@ async function main(): Promise<void> {
     // await execSync('git stash')
     // await execSync(`git checkout --progress --force ${branchNameBase}`)
     console.log('lis before')
+    await execSync(`git checkout --progress --force ${branchNameHead}`)
     const lis = await execSync(
-      `git diff --name-only origin/${branchNameBase}@v1.3.0 origin/${branchNameBase}`
+      `git diff --name-only origin/${branchNameBase} origin/${branchNameHead}`
     )
     console.log('lis', lis)
 
