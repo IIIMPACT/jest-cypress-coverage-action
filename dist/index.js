@@ -5934,7 +5934,7 @@ function main() {
             console.log('jestFullCodeCoverageSummaryNew1:', jestFullCodeCoverageSummaryNew1);
             // Diff coverage
             // 2. get coverage on changed files of PR pull request and test this against threshold
-            yield execSync(`npm run merge  -- --report ./jest-coverage-full/coverage-final.json --report ./.nyc_output/out.json --changedSince=origin/development`);
+            yield execSync(`npm run merge  -- --report ./jest-coverage-full/coverage-final.json --report ./.nyc_output/out.json --changedSince=${branchNameBase}`);
             const jestFullCodeCoverageNew2 = yield JSON.parse(fs.readFileSync('coverage/coverage-final.json').toString());
             console.log('jestFullCodeCoverageNew2:', jestFullCodeCoverageNew2);
             const jestFullCodeCoverageSummaryNew2 = yield JSON.parse(fs.readFileSync('coverage/coverage-summary.json').toString());

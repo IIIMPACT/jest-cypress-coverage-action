@@ -99,7 +99,7 @@ async function main(): Promise<void> {
     // Diff coverage
     // 2. get coverage on changed files of PR pull request and test this against threshold
     await execSync(
-      `npm run merge  -- --report ./jest-coverage-full/coverage-final.json --report ./.nyc_output/out.json --changedSince=origin/development`
+      `npm run merge  -- --report ./jest-coverage-full/coverage-final.json --report ./.nyc_output/out.json --changedSince=${branchNameBase}`
     )
     const jestFullCodeCoverageNew2 = await JSON.parse(
       fs.readFileSync('coverage/coverage-final.json').toString()
