@@ -5918,7 +5918,6 @@ function main() {
             // await execSync('git stash')
             // await execSync(`git checkout --progress --force ${branchNameBase}`)
             console.log('lis before');
-            yield execSync(`git checkout --progress --force origin/${branchNameHead}`);
             const lis = yield execSync(`git diff --name-only origin/${branchNameBase} origin/${branchNameHead}`);
             console.log('lis', lis);
             // Full coverage
