@@ -5842,6 +5842,90 @@ exports.p = DiffChecker;
 
 /***/ }),
 
+/***/ 921:
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+var __webpack_unused_export__;
+
+/* eslint-disable no-console */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+// import {CoverageReport} from './Model/CoverageReport'
+// import {DiffCoverageReport} from './Model/DiffCoverageReport'
+// import {CoverageData} from './Model/CoverageData'
+// import {DiffFileCoverageData} from './Model/DiffFileCoverageData'
+__webpack_unused_export__ = ({ value: true });
+exports.C = void 0;
+// import { FileCoverage } from "istanbul-lib-coverage"
+class ThresholdChecker {
+    constructor(coverageReport /*CoverageReport*/, coverageThreshold /*CoverageReport*/) {
+        this.coverageReport = [];
+        this.pass = true;
+        const reportKeys = Object.keys(coverageReport);
+        const coverageReportObj = {};
+        for (const key of reportKeys) {
+            coverageReportObj[key] = {
+                branches: this.getPassFail(coverageReport[key].branches, coverageThreshold.branches),
+                statements: this.getPassFail(coverageReport[key].statements, coverageThreshold.statements),
+                lines: this.getPassFail(coverageReport[key].lines, coverageThreshold.lines),
+                functions: this.getPassFail(coverageReport[key].functions, coverageThreshold.functions)
+            };
+        }
+        this.coverageReport = Object.entries(coverageReportObj)
+            .sort(([a], [b]) => {
+            if (a === 'all' || a < b) {
+                return -1;
+            }
+            if (a > b) {
+                return 1;
+            }
+            return 0;
+        })
+            // eslint-disable-next-line @typescript-eslint/promise-function-async
+            .map(([key, value]) => (Object.assign({ key }, value)));
+    }
+    getPassFail(coverage, threshold) {
+        let pct;
+        try {
+            pct = this.getPercentage(coverage);
+        }
+        catch (e) {
+            this.pass = false;
+            return {
+                pct: 'unknown',
+                pass: false
+            };
+        }
+        if (!(pct < threshold)) {
+            return {
+                pct,
+                pass: true
+            };
+        }
+        this.pass = false;
+        return {
+            pct,
+            pass: false
+        };
+    }
+    getCoverageDetails(currentDirectory) {
+        const returnStrings = [];
+        for (const fileCoverage of this.coverageReport) {
+            const { key, statements, branches, functions, lines } = fileCoverage;
+            returnStrings.push(`${key.replace(currentDirectory, '')} | ${statements.pct} | ${branches.pct} | ${functions.pct} | ${lines.pct}`);
+        }
+        return returnStrings;
+    }
+    getPercentage(coverageData /*CoverageData*/) {
+        console.log('coverageData: ', coverageData);
+        return coverageData.pct;
+    }
+}
+exports.C = ThresholdChecker;
+
+
+/***/ }),
+
 /***/ 399:
 /***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
 
@@ -5866,24 +5950,11 @@ const execSync = __webpack_require__(129).execSync;
 // const fs = require('fs-extra')
 const fs = __webpack_require__(747);
 const DiffChecker = __webpack_require__(458)/* .DiffChecker */ .p;
-// const {merge: mergeJestCypressCoverage} = require('./mergeJestCypressCoverage')
-// import fs from 'fs'
-// const parsePullRequestId = (githubRef?: string): string => {
-//   const result = githubRef ? /refs\/pull\/(\d+)\/merge/g.exec(githubRef) : null
-//   if (!result) throw new Error('Reference not found.')
-//   const [, pullRequestId] = result
-//   return pullRequestId
-// }
+const ThresholdChecker = __webpack_require__(921)/* .ThresholdChecker */ .C;
 function main() {
     var _a, _b;
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            // const sha = core.getInput('sha')
-            // const fullCoverage = JSON.parse(core.getInput('fullCoverageDiff'))
-            // const commandToRun = core.getInput('runCommand')
-            // console.log('sha: ', sha)
-            // console.log('fullCoverage : ', fullCoverage)
-            // console.log('commandToRun: ', commandToRun)
             const repoName = github.context.repo.repo;
             const repoOwner = github.context.repo.owner;
             const githubToken = core.getInput('accessToken', { required: true });
@@ -5891,82 +5962,52 @@ function main() {
             const prNumber = github.context.issue.number;
             const branchNameBase = (_a = github.context.payload.pull_request) === null || _a === void 0 ? void 0 : _a.base.ref;
             const branchNameHead = (_b = github.context.payload.pull_request) === null || _b === void 0 ? void 0 : _b.head.ref;
-            console.log('repoName: ', repoName);
-            console.log('repoOwner : ', repoOwner);
-            console.log('prNumber: ', prNumber);
-            console.log('branchNameBase: ', branchNameBase);
-            console.log('branchNameHead: ', branchNameHead);
-            /*const client = new GitHub(githubToken, {})
-            const result = await client.repos.listPullRequestsAssociatedWithCommit({
-              owner: github.context.repo.owner,
-              repo: github.context.repo.repo,
-              // eslint-disable-next-line @typescript-eslint/camelcase
-              commit_sha: sha || github.context.sha
-            })
-            const pr = result.data.length > 0 && result.data[0]
-            console.log('pr', (pr && pr.number) || '')
-            console.log('number', (pr && pr.number) || '')
-            console.log('title', (pr && pr.title) || '')
-            console.log('body', (pr && pr.body) || '')*/
-            // const {GITHUB_REF, GITHUB_EVENT_PATH} = process.env
-            // console.log('GITHUB_EVENT_PATH: ', GITHUB_EVENT_PATH)
-            // console.log('GITHUB_REF: ', GITHUB_REF)
-            // const pullRequestId = parsePullRequestId(GITHUB_REF)
-            // console.log('pullRequestId: ', pullRequestId)
-            // console.log('github.context.payload: ', github.context.payload)
-            // await execSync('git fetch')
-            // await execSync('git stash')
-            // await execSync(`git checkout --progress --force ${branchNameBase}`)
-            // Full coverage
-            // 1 Get full code coverage current
+            // 1. Get the full code coverage of new branch (jest and cypress merged)
+            //    a. Execute tests
             yield execSync('npm run test:cypress:staging & npm run test:all'); // should include cypress here or add it as separate
-            // const jestFullCodeCoverageNew = await JSON.parse(
-            //   fs.readFileSync('jest-coverage-full/coverage-final.json').toString()
-            // )
-            // console.log('jestFullCodeCoverageNew:', jestFullCodeCoverageNew)
-            const jestFullCodeCoverageSummaryNew = yield JSON.parse(fs.readFileSync('jest-coverage-full/coverage-summary.json').toString());
-            console.log('jestFullCodeCoverageSummaryNew:', jestFullCodeCoverageSummaryNew);
-            // const cypressCodeCoverageNew = await JSON.parse(
-            //   fs.readFileSync('./.nyc_output/out.json').toString()
-            // )
-            // console.log('cypressCodeCoverageNew:', cypressCodeCoverageNew)
-            // 1.b Merge coverages
+            //    b Merge coverages
             yield execSync(`npm run merge  -- --report ./jest-coverage-full/coverage-final.json --report ./.nyc_output/out.json`);
-            const jestFullCodeCoverageNew1 = yield JSON.parse(fs.readFileSync('coverage/coverage-final.json').toString());
-            // console.log('jestFullCodeCoverageNew1:', jestFullCodeCoverageNew1)
-            const jestFullCodeCoverageSummaryNew1 = yield JSON.parse(fs.readFileSync('coverage/coverage-summary.json').toString());
-            console.log('jestFullCodeCoverageSummaryNew1:', jestFullCodeCoverageSummaryNew1);
+            const fullCodeCoverageNew = yield JSON.parse(fs.readFileSync('coverage/coverage-final.json').toString());
             // Diff coverage
-            // 2. get coverage on changed files of PR pull request and test this against threshold
+            // 2. Get the full code coverage of changed files (jest and cypress merged)
             yield execSync(`npm run merge  -- --report ./jest-coverage-full/coverage-final.json --report ./.nyc_output/out.json --changedSince=${branchNameBase}`);
-            // const jestFullCodeCoverageNew2 = await JSON.parse(
-            //   fs.readFileSync('coverage/coverage-final.json').toString()
-            // )
-            // console.log('jestFullCodeCoverageNew2:', jestFullCodeCoverageNew2)
-            const jestFullCodeCoverageSummaryNew2 = yield JSON.parse(fs.readFileSync('coverage/coverage-summary.json').toString());
-            console.log('jestFullCodeCoverageSummaryNew2:', jestFullCodeCoverageSummaryNew2);
-            // 3 Checkout dev
-            // 2. get coverage diff and display
-            yield execSync('git fetch');
-            yield execSync('git stash');
-            yield execSync(`git checkout --progress --force ${branchNameBase}`);
-            yield execSync('npm run test:cypress:staging & npm run test:all');
-            // const jestFullCodeCoverageOld = await JSON.parse(
-            //   fs.readFileSync('jest-coverage-full/coverage-final.json').toString()
-            // )
-            // console.log('jestFullCodeCoverageOld: ', jestFullCodeCoverageOld)
-            const jestFullCodeCoverageSummaryOld = yield JSON.parse(fs.readFileSync('jest-coverage-full/coverage-summary.json').toString());
-            console.log('jestFullCodeCoverageOld: ', jestFullCodeCoverageSummaryOld);
-            // 2. get coverage on changed files of PR pull request and test this against threshold
-            yield execSync(`npm run merge  -- --report ./jest-coverage-full/coverage-final.json --report ./.nyc_output/out.json`);
-            const jestFullCodeCoverageOld1 = yield JSON.parse(fs.readFileSync('coverage/coverage-final.json').toString());
-            // console.log('jestFullCodeCoverageOld1:', jestFullCodeCoverageOld1)
-            const jestFullCodeCoverageSummaryOld1 = yield JSON.parse(fs.readFileSync('coverage/coverage-summary.json').toString());
-            console.log('jestFullCodeCoverageSummaryOld1:', jestFullCodeCoverageSummaryOld1);
+            const prCodeCoverageNew = yield JSON.parse(fs.readFileSync('coverage/coverage-final.json').toString());
+            //    a. Check thresholds
+            const thresholdChecker = new ThresholdChecker(prCodeCoverageNew, {});
+            //    a. Post message
             const currentDirectory = yield execSync('pwd')
                 .toString()
                 .trim();
-            const diffChecker = new DiffChecker(jestFullCodeCoverageNew1, jestFullCodeCoverageOld1);
+            let thresholdMessageToPost = `Code coverage for changed files in ${branchNameHead} \n`;
+            const thresholdCoverageDetails = thresholdChecker.getCoverageDetails(`${currentDirectory}/`);
+            if (thresholdCoverageDetails.length === 0) {
+                thresholdMessageToPost =
+                    'No changes to code coverage between the base branch and the head branch';
+            }
+            else {
+                thresholdMessageToPost +=
+                    'File | % Stmts | % Branch | % Funcs | % Lines \n -----|---------|----------|---------|------ \n';
+                thresholdMessageToPost += thresholdCoverageDetails.join('\n');
+            }
+            console.log('posting threshold message: ', thresholdMessageToPost);
+            yield githubClient.issues.createComment({
+                repo: repoName,
+                owner: repoOwner,
+                body: thresholdMessageToPost,
+                issue_number: prNumber
+            });
+            // Get development branch coverage
+            //    a. checkout dev branch 2. get coverage diff and display
+            yield execSync('git fetch');
+            yield execSync('git stash');
+            yield execSync(`git checkout --progress --force ${branchNameBase}`);
+            //    b. run tests
+            yield execSync('npm run test:cypress:staging & npm run test:all');
+            //    c. merge jest/cypress
+            yield execSync(`npm run merge  -- --report ./jest-coverage-full/coverage-final.json --report ./.nyc_output/out.json`);
+            const fullCodeCoverageOld = yield JSON.parse(fs.readFileSync('coverage/coverage-final.json').toString());
+            //    d. get coverage diff
+            const diffChecker = new DiffChecker(fullCodeCoverageNew, fullCodeCoverageOld);
             let messageToPost = `Code coverage diff between base branch:${branchNameBase} and head branch: ${branchNameHead} \n`;
             const fullCoverage = true;
             const coverageDetails = diffChecker.getCoverageDetails(!fullCoverage, `${currentDirectory}/`);
@@ -5979,7 +6020,7 @@ function main() {
                     'File | % Stmts | % Branch | % Funcs | % Lines \n -----|---------|----------|---------|------ \n';
                 messageToPost += coverageDetails.join('\n');
             }
-            console.log('messageToPost Final: ', messageToPost);
+            console.log('diff messageToPost Final: ', messageToPost);
             yield githubClient.issues.createComment({
                 repo: repoName,
                 owner: repoOwner,
