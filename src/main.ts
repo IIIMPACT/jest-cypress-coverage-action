@@ -23,7 +23,7 @@ async function main(): Promise<void> {
 
     // 1. Get the full code coverage of new branch (jest and cypress merged)
     //    a. Execute tests
-    await execSync('npm run test:cypress:staging') // should include cypress here or add it as separate
+    await execSync('npm run test:all') // should include cypress here or add it as separate
     console.log('Checkpoint: 1. tests completed')
 
     //    b Merge coverages
@@ -83,7 +83,7 @@ async function main(): Promise<void> {
     console.log('Checkpoint: 5. development checkout competed')
 
     //    b. run tests
-    await execSync('npm run test:cypress:staging')
+    await execSync('npm run test:all')
     console.log('Checkpoint: 6. development tests completed')
 
     //    c. merge jest/cypress
