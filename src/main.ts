@@ -49,8 +49,8 @@ async function main(): Promise<void> {
     const githubToken = core.getInput('accessToken', {required: true})
     const githubClient = github.getOctokit(githubToken)
     const prNumber = github.context.issue.number
-    const branchNameBase = github.context.payload.pull_request?.base.sha
-    const branchNameHead = github.context.payload.pull_request?.head.sha
+    const branchNameBase = github.context.payload.pull_request?.base.ref
+    const branchNameHead = github.context.payload.pull_request?.head.ref
     // console.log('Checkpoint: 0. start', github.context.payload.pull_request)
     console.log('Checkpoint: 0. start')
 
@@ -81,8 +81,9 @@ async function main(): Promise<void> {
 
     // Diff coverage
     // 2. Get the full code coverage of changed files (jest and cypress merged)
+    await execSync('git fetch origin development:development')
     await execSync(
-      `npm run merge  -- --report ./jest-coverage-full/coverage-final.json --changedSince=${branchNameBase}..${branchNameHead}`
+      `npm run merge  -- --report ./jest-coverage-full/coverage-final.json --changedSince=${branchNameBase}`
     )
     console.log('Checkpoint: 3. PR merge completed')
 
