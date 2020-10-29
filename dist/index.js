@@ -5990,8 +5990,8 @@ function main() {
             const githubToken = core.getInput('accessToken', { required: true });
             const githubClient = github.getOctokit(githubToken);
             const prNumber = github.context.issue.number;
-            const branchNameBase = (_a = github.context.payload.pull_request) === null || _a === void 0 ? void 0 : _a.base.ref;
-            const branchNameHead = (_b = github.context.payload.pull_request) === null || _b === void 0 ? void 0 : _b.head.ref;
+            const branchNameBase = (_a = github.context.payload.pull_request) === null || _a === void 0 ? void 0 : _a.base.sha;
+            const branchNameHead = (_b = github.context.payload.pull_request) === null || _b === void 0 ? void 0 : _b.head.sha;
             // console.log('Checkpoint: 0. start', github.context.payload.pull_request)
             console.log('Checkpoint: 0. start');
             const { GITHUB_REF, GITHUB_EVENT_PATH } = process.env;
@@ -6013,7 +6013,7 @@ function main() {
             const fullCodeCoverageNew = yield JSON.parse(fs.readFileSync('coverage/coverage-final.json').toString());
             // Diff coverage
             // 2. Get the full code coverage of changed files (jest and cypress merged)
-            yield execSync(`npm run merge  -- --report ./jest-coverage-full/coverage-final.json --changedSince=d4c163dcda5d018906af631f391ca5ee32a1015e`);
+            yield execSync(`npm run merge  -- --report ./jest-coverage-full/coverage-final.json --changedSince=${branchNameBase}..${branchNameHead}`);
             console.log('Checkpoint: 3. PR merge completed');
             const prCodeCoverageNew = yield JSON.parse(fs.readFileSync('coverage/coverage-final.json').toString());
             console.log('Checkpoint: 3b. PR merge completed', prCodeCoverageNew);
