@@ -19,15 +19,16 @@ async function main(): Promise<void> {
     const prNumber = github.context.issue.number
     const branchNameBase = github.context.payload.pull_request?.base.ref
     const branchNameHead = github.context.payload.pull_request?.head.ref
+    console.log('Checkpoint: 0. start')
 
     // 1. Get the full code coverage of new branch (jest and cypress merged)
     //    a. Execute tests
-    await execSync('npm run test:cypress:staging & npm run test:all') // should include cypress here or add it as separate
+    await execSync('npm run test:cypress:staging') // should include cypress here or add it as separate
     console.log('Checkpoint: 1. tests completed')
 
     //    b Merge coverages
     await execSync(
-      `npm run merge  -- --report ./jest-coverage-full/coverage-final.json --report ./.nyc_output/out.json`
+      `npm run merge  -- --report ./jest-coverage-full/coverage-final.json`
     )
     console.log('Checkpoint: 2. first merge completed')
 
@@ -38,7 +39,7 @@ async function main(): Promise<void> {
     // Diff coverage
     // 2. Get the full code coverage of changed files (jest and cypress merged)
     await execSync(
-      `npm run merge  -- --report ./jest-coverage-full/coverage-final.json --report ./.nyc_output/out.json --changedSince=${branchNameBase}`
+      `npm run merge  -- --report ./jest-coverage-full/coverage-final.json --changedSince=${branchNameBase}`
     )
     console.log('Checkpoint: 3. PR merge completed')
 
@@ -82,12 +83,12 @@ async function main(): Promise<void> {
     console.log('Checkpoint: 5. development checkout competed')
 
     //    b. run tests
-    await execSync('npm run test:cypress:staging & npm run test:all')
+    await execSync('npm run test:cypress:staging')
     console.log('Checkpoint: 6. development tests completed')
 
     //    c. merge jest/cypress
     await execSync(
-      `npm run merge  -- --report ./jest-coverage-full/coverage-final.json --report ./.nyc_output/out.json`
+      `npm run merge  -- --report ./jest-coverage-full/coverage-final.json`
     )
     console.log('Checkpoint: 7. development merge completed')
     const fullCodeCoverageOld = await JSON.parse(

@@ -5962,17 +5962,18 @@ function main() {
             const prNumber = github.context.issue.number;
             const branchNameBase = (_a = github.context.payload.pull_request) === null || _a === void 0 ? void 0 : _a.base.ref;
             const branchNameHead = (_b = github.context.payload.pull_request) === null || _b === void 0 ? void 0 : _b.head.ref;
+            console.log('Checkpoint: 0. start');
             // 1. Get the full code coverage of new branch (jest and cypress merged)
             //    a. Execute tests
-            yield execSync('npm run test:cypress:staging & npm run test:all'); // should include cypress here or add it as separate
+            yield execSync('npm run test:cypress:staging'); // should include cypress here or add it as separate
             console.log('Checkpoint: 1. tests completed');
             //    b Merge coverages
-            yield execSync(`npm run merge  -- --report ./jest-coverage-full/coverage-final.json --report ./.nyc_output/out.json`);
+            yield execSync(`npm run merge  -- --report ./jest-coverage-full/coverage-final.json`);
             console.log('Checkpoint: 2. first merge completed');
             const fullCodeCoverageNew = yield JSON.parse(fs.readFileSync('coverage/coverage-final.json').toString());
             // Diff coverage
             // 2. Get the full code coverage of changed files (jest and cypress merged)
-            yield execSync(`npm run merge  -- --report ./jest-coverage-full/coverage-final.json --report ./.nyc_output/out.json --changedSince=${branchNameBase}`);
+            yield execSync(`npm run merge  -- --report ./jest-coverage-full/coverage-final.json --changedSince=${branchNameBase}`);
             console.log('Checkpoint: 3. PR merge completed');
             const prCodeCoverageNew = yield JSON.parse(fs.readFileSync('coverage/coverage-final.json').toString());
             //    a. Check thresholds
@@ -6007,10 +6008,10 @@ function main() {
             yield execSync(`git checkout --progress --force ${branchNameBase}`);
             console.log('Checkpoint: 5. development checkout competed');
             //    b. run tests
-            yield execSync('npm run test:cypress:staging & npm run test:all');
+            yield execSync('npm run test:cypress:staging');
             console.log('Checkpoint: 6. development tests completed');
             //    c. merge jest/cypress
-            yield execSync(`npm run merge  -- --report ./jest-coverage-full/coverage-final.json --report ./.nyc_output/out.json`);
+            yield execSync(`npm run merge  -- --report ./jest-coverage-full/coverage-final.json`);
             console.log('Checkpoint: 7. development merge completed');
             const fullCodeCoverageOld = yield JSON.parse(fs.readFileSync('coverage/coverage-final.json').toString());
             //    d. get coverage diff
