@@ -6013,7 +6013,8 @@ function main() {
             const fullCodeCoverageNew = yield JSON.parse(fs.readFileSync('coverage/coverage-final.json').toString());
             // Diff coverage
             // 2. Get the full code coverage of changed files (jest and cypress merged)
-            yield execSync('git fetch origin development:development');
+            yield execSync(`git fetch origin ${branchNameBase}:${branchNameBase}`);
+            yield execSync(`git fetch origin ${branchNameHead}:${branchNameHead}`);
             yield execSync(`npm run merge  -- --report ./jest-coverage-full/coverage-final.json --changedSince=${branchNameBase}`);
             console.log('Checkpoint: 3. PR merge completed');
             const prCodeCoverageNew = yield JSON.parse(fs.readFileSync('coverage/coverage-final.json').toString());

@@ -81,7 +81,8 @@ async function main(): Promise<void> {
 
     // Diff coverage
     // 2. Get the full code coverage of changed files (jest and cypress merged)
-    await execSync('git fetch origin development:development')
+    await execSync(`git fetch origin ${branchNameBase}:${branchNameBase}`)
+    await execSync(`git fetch origin ${branchNameHead}:${branchNameHead}`)
     await execSync(
       `npm run merge  -- --report ./jest-coverage-full/coverage-final.json --changedSince=${branchNameBase}`
     )
