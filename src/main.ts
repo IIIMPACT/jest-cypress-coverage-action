@@ -46,6 +46,7 @@ async function main(): Promise<void> {
     const prCodeCoverageNew = await JSON.parse(
       fs.readFileSync('coverage/coverage-final.json').toString()
     )
+    console.log('Checkpoint: 3b. PR merge completed', prCodeCoverageNew)
 
     //    a. Check thresholds
     const thresholdChecker = new ThresholdChecker(prCodeCoverageNew, {})
@@ -95,6 +96,7 @@ async function main(): Promise<void> {
       fs.readFileSync('coverage/coverage-final.json').toString()
     )
 
+    // console.log('Checkpoint: 7b. fullCodeCoverageNew', fullCodeCoverageNew.)
     //    d. get coverage diff
     const diffChecker = new DiffChecker(
       fullCodeCoverageNew,

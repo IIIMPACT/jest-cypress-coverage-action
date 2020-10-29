@@ -51,7 +51,7 @@ export class ThresholdChecker {
   }
 
   getPassFail(
-    coverage: number,
+    coverage: any,
     threshold: number
   ): {pct: number | 'unknown'; pass: boolean} {
     let pct: number | 'unknown'
@@ -91,7 +91,7 @@ export class ThresholdChecker {
   }
 
   private getPercentage(coverageData: any /*CoverageData*/): number {
-    console.log('coverageData: ', coverageData)
+    console.log('here coverageData: ', coverageData)
     return coverageData.pct
   }
 }

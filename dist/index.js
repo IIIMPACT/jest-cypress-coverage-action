@@ -5917,7 +5917,7 @@ class ThresholdChecker {
         return returnStrings;
     }
     getPercentage(coverageData /*CoverageData*/) {
-        console.log('coverageData: ', coverageData);
+        console.log('here coverageData: ', coverageData);
         return coverageData.pct;
     }
 }
@@ -5976,6 +5976,7 @@ function main() {
             yield execSync(`npm run merge  -- --report ./jest-coverage-full/coverage-final.json --changedSince=${branchNameBase}`);
             console.log('Checkpoint: 3. PR merge completed');
             const prCodeCoverageNew = yield JSON.parse(fs.readFileSync('coverage/coverage-final.json').toString());
+            console.log('Checkpoint: 3b. PR merge completed', prCodeCoverageNew);
             //    a. Check thresholds
             const thresholdChecker = new ThresholdChecker(prCodeCoverageNew, {});
             //    a. Post message
@@ -6014,6 +6015,7 @@ function main() {
             yield execSync(`npm run merge  -- --report ./jest-coverage-full/coverage-final.json`);
             console.log('Checkpoint: 7. development merge completed');
             const fullCodeCoverageOld = yield JSON.parse(fs.readFileSync('coverage/coverage-final.json').toString());
+            // console.log('Checkpoint: 7b. fullCodeCoverageNew', fullCodeCoverageNew.)
             //    d. get coverage diff
             const diffChecker = new DiffChecker(fullCodeCoverageNew, fullCodeCoverageOld);
             let messageToPost = `Code coverage diff between base branch:${branchNameBase} and head branch: ${branchNameHead} \n`;
