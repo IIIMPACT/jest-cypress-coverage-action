@@ -23,11 +23,14 @@ async function main(): Promise<void> {
     // 1. Get the full code coverage of new branch (jest and cypress merged)
     //    a. Execute tests
     await execSync('npm run test:cypress:staging & npm run test:all') // should include cypress here or add it as separate
+    console.log('Checkpoint: 1. tests completed')
 
     //    b Merge coverages
     await execSync(
       `npm run merge  -- --report ./jest-coverage-full/coverage-final.json --report ./.nyc_output/out.json`
     )
+    console.log('Checkpoint: 2. first merge completed')
+
     const fullCodeCoverageNew = await JSON.parse(
       fs.readFileSync('coverage/coverage-final.json').toString()
     )
@@ -37,6 +40,8 @@ async function main(): Promise<void> {
     await execSync(
       `npm run merge  -- --report ./jest-coverage-full/coverage-final.json --report ./.nyc_output/out.json --changedSince=${branchNameBase}`
     )
+    console.log('Checkpoint: 3. PR merge completed')
+
     const prCodeCoverageNew = await JSON.parse(
       fs.readFileSync('coverage/coverage-final.json').toString()
     )
@@ -67,20 +72,24 @@ async function main(): Promise<void> {
       body: thresholdMessageToPost,
       issue_number: prNumber
     })
+    console.log('Checkpoint: 4. Threshold message posted')
 
     // Get development branch coverage
     //    a. checkout dev branch 2. get coverage diff and display
     await execSync('git fetch')
     await execSync('git stash')
     await execSync(`git checkout --progress --force ${branchNameBase}`)
+    console.log('Checkpoint: 5. development checkout competed')
 
     //    b. run tests
     await execSync('npm run test:cypress:staging & npm run test:all')
+    console.log('Checkpoint: 6. development tests completed')
 
     //    c. merge jest/cypress
     await execSync(
       `npm run merge  -- --report ./jest-coverage-full/coverage-final.json --report ./.nyc_output/out.json`
     )
+    console.log('Checkpoint: 7. development merge completed')
     const fullCodeCoverageOld = await JSON.parse(
       fs.readFileSync('coverage/coverage-final.json').toString()
     )
@@ -112,6 +121,7 @@ async function main(): Promise<void> {
       body: messageToPost,
       issue_number: prNumber
     })
+    console.log('Checkpoint: 8. diff message posted')
   } catch (error) {
     core.setFailed(error.message)
   }
