@@ -19,7 +19,11 @@ async function main(): Promise<void> {
     const prNumber = github.context.issue.number
     const branchNameBase = github.context.payload.pull_request?.base.ref
     const branchNameHead = github.context.payload.pull_request?.head.ref
+    await execSync(
+      `git diff HEAD  --name-only origin/${branchNameBase} origin/${branchNameHead}`
+    )
     console.log('Checkpoint: 0. start')
+    process.exit()
 
     // 1. Get the full code coverage of new branch (jest and cypress merged)
     //    a. Execute tests
