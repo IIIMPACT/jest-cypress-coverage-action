@@ -10,6 +10,38 @@ const fs = require('fs')
 const DiffChecker = require('./DiffChecker').DiffChecker
 const ThresholdChecker = require('./ThresholdChecker').ThresholdChecker
 
+// const {merge: mergeJestCypressCoverage} = require('./mergeJestCypressCoverage')
+// import fs from 'fs'
+
+const parsePullRequestId = (githubRef?: string): string => {
+  const result = githubRef ? /refs\/pull\/(\d+)\/merge/g.exec(githubRef) : null
+  if (!result) throw new Error('Reference not found.')
+  const [, pullRequestId] = result
+  return pullRequestId
+}
+
+/*const client = new GitHub(githubToken, {})
+const result = await client.repos.listPullRequestsAssociatedWithCommit({
+  owner: github.context.repo.owner,
+  repo: github.context.repo.repo,
+  // eslint-disable-next-line @typescript-eslint/camelcase
+  commit_sha: sha || github.context.sha
+})
+const pr = result.data.length > 0 && result.data[0]
+console.log('pr', (pr && pr.number) || '')
+console.log('number', (pr && pr.number) || '')
+console.log('title', (pr && pr.title) || '')
+console.log('body', (pr && pr.body) || '')*/
+// const {GITHUB_REF, GITHUB_EVENT_PATH} = process.env
+// console.log('GITHUB_EVENT_PATH: ', GITHUB_EVENT_PATH)
+// console.log('GITHUB_REF: ', GITHUB_REF)
+// const pullRequestId = parsePullRequestId(GITHUB_REF)
+// console.log('pullRequestId: ', pullRequestId)
+// console.log('github.context.payload: ', github.context.payload)
+// await execSync('git fetch')
+// await execSync('git stash')
+// await execSync(`git checkout --progress --force ${branchNameBase}`)
+
 async function main(): Promise<void> {
   try {
     const repoName = github.context.repo.repo
@@ -20,8 +52,14 @@ async function main(): Promise<void> {
     const branchNameBase = github.context.payload.pull_request?.base.ref
     const branchNameHead = github.context.payload.pull_request?.head.ref
     console.log('Checkpoint: 0. start', github.context.payload.pull_request)
+
+    const {GITHUB_REF, GITHUB_EVENT_PATH} = process.env
+    console.log('GITHUB_EVENT_PATH: ', GITHUB_EVENT_PATH)
+    console.log('GITHUB_REF: ', GITHUB_REF)
+    const pullRequestId = parsePullRequestId(GITHUB_REF)
+    console.log('pullRequestId: ', pullRequestId)
     await execSync(
-      `git diff --name-only origin/${branchNameBase} origin/${branchNameHead}`
+      `git diff --name-only d4c163dcda5d018906af631f391ca5ee32a1015e 8a52c4c710aedd4b4eacdb31a43fa9915a6221f4`
     )
     process.exit()
 

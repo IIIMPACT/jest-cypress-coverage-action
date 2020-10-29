@@ -5951,6 +5951,36 @@ const execSync = __webpack_require__(129).execSync;
 const fs = __webpack_require__(747);
 const DiffChecker = __webpack_require__(458)/* .DiffChecker */ .p;
 const ThresholdChecker = __webpack_require__(921)/* .ThresholdChecker */ .C;
+// const {merge: mergeJestCypressCoverage} = require('./mergeJestCypressCoverage')
+// import fs from 'fs'
+const parsePullRequestId = (githubRef) => {
+    const result = githubRef ? /refs\/pull\/(\d+)\/merge/g.exec(githubRef) : null;
+    if (!result)
+        throw new Error('Reference not found.');
+    const [, pullRequestId] = result;
+    return pullRequestId;
+};
+/*const client = new GitHub(githubToken, {})
+const result = await client.repos.listPullRequestsAssociatedWithCommit({
+  owner: github.context.repo.owner,
+  repo: github.context.repo.repo,
+  // eslint-disable-next-line @typescript-eslint/camelcase
+  commit_sha: sha || github.context.sha
+})
+const pr = result.data.length > 0 && result.data[0]
+console.log('pr', (pr && pr.number) || '')
+console.log('number', (pr && pr.number) || '')
+console.log('title', (pr && pr.title) || '')
+console.log('body', (pr && pr.body) || '')*/
+// const {GITHUB_REF, GITHUB_EVENT_PATH} = process.env
+// console.log('GITHUB_EVENT_PATH: ', GITHUB_EVENT_PATH)
+// console.log('GITHUB_REF: ', GITHUB_REF)
+// const pullRequestId = parsePullRequestId(GITHUB_REF)
+// console.log('pullRequestId: ', pullRequestId)
+// console.log('github.context.payload: ', github.context.payload)
+// await execSync('git fetch')
+// await execSync('git stash')
+// await execSync(`git checkout --progress --force ${branchNameBase}`)
 function main() {
     var _a, _b;
     return __awaiter(this, void 0, void 0, function* () {
@@ -5963,7 +5993,12 @@ function main() {
             const branchNameBase = (_a = github.context.payload.pull_request) === null || _a === void 0 ? void 0 : _a.base.ref;
             const branchNameHead = (_b = github.context.payload.pull_request) === null || _b === void 0 ? void 0 : _b.head.ref;
             console.log('Checkpoint: 0. start', github.context.payload.pull_request);
-            yield execSync(`git diff --name-only origin/${branchNameBase} origin/${branchNameHead}`);
+            const { GITHUB_REF, GITHUB_EVENT_PATH } = process.env;
+            console.log('GITHUB_EVENT_PATH: ', GITHUB_EVENT_PATH);
+            console.log('GITHUB_REF: ', GITHUB_REF);
+            const pullRequestId = parsePullRequestId(GITHUB_REF);
+            console.log('pullRequestId: ', pullRequestId);
+            yield execSync(`git diff --name-only d4c163dcda5d018906af631f391ca5ee32a1015e 8a52c4c710aedd4b4eacdb31a43fa9915a6221f4`);
             process.exit();
             // 1. Get the full code coverage of new branch (jest and cypress merged)
             //    a. Execute tests
