@@ -20,7 +20,7 @@ async function main(): Promise<void> {
     const branchNameBase = github.context.payload.pull_request?.base.ref
     const branchNameHead = github.context.payload.pull_request?.head.ref
     await execSync(
-      `git diff v1.3.0 -- --name-only origin/${branchNameBase} origin/${branchNameHead}`
+      `git diff --name-only origin/${branchNameBase} origin/${branchNameHead}`
     )
     console.log('Checkpoint: 0. start')
     process.exit()

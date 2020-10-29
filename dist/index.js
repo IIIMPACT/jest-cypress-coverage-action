@@ -5962,7 +5962,7 @@ function main() {
             const prNumber = github.context.issue.number;
             const branchNameBase = (_a = github.context.payload.pull_request) === null || _a === void 0 ? void 0 : _a.base.ref;
             const branchNameHead = (_b = github.context.payload.pull_request) === null || _b === void 0 ? void 0 : _b.head.ref;
-            yield execSync(`git diff v1.3.0 -- --name-only origin/${branchNameBase} origin/${branchNameHead}`);
+            yield execSync(`git diff --name-only origin/${branchNameBase} origin/${branchNameHead}`);
             console.log('Checkpoint: 0. start');
             process.exit();
             // 1. Get the full code coverage of new branch (jest and cypress merged)
