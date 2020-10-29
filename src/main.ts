@@ -51,17 +51,18 @@ async function main(): Promise<void> {
     const prNumber = github.context.issue.number
     const branchNameBase = github.context.payload.pull_request?.base.ref
     const branchNameHead = github.context.payload.pull_request?.head.ref
-    console.log('Checkpoint: 0. start', github.context.payload.pull_request)
+    // console.log('Checkpoint: 0. start', github.context.payload.pull_request)
+    console.log('Checkpoint: 0. start')
 
     const {GITHUB_REF, GITHUB_EVENT_PATH} = process.env
     console.log('GITHUB_EVENT_PATH: ', GITHUB_EVENT_PATH)
     console.log('GITHUB_REF: ', GITHUB_REF)
     const pullRequestId = parsePullRequestId(GITHUB_REF)
     console.log('pullRequestId: ', pullRequestId)
-    await execSync(
-      `git diff --name-only d4c163dcda5d018906af631f391ca5ee32a1015e 8a52c4c710aedd4b4eacdb31a43fa9915a6221f4`
-    )
-    process.exit()
+    // await execSync(
+    //   `git diff --name-only d4c163dcda5d018906af631f391ca5ee32a1015e 8a52c4c710aedd4b4eacdb31a43fa9915a6221f4`
+    // )
+    // process.exit()
 
     // 1. Get the full code coverage of new branch (jest and cypress merged)
     //    a. Execute tests
@@ -81,7 +82,7 @@ async function main(): Promise<void> {
     // Diff coverage
     // 2. Get the full code coverage of changed files (jest and cypress merged)
     await execSync(
-      `npm run merge  -- --report ./jest-coverage-full/coverage-final.json --changedSince=${branchNameBase}`
+      `npm run merge  -- --report ./jest-coverage-full/coverage-final.json --changedSince=d4c163dcda5d018906af631f391ca5ee32a1015e`
     )
     console.log('Checkpoint: 3. PR merge completed')
 
