@@ -22,7 +22,7 @@ async function main(): Promise<void> {
     await execSync(
       `git diff --name-only origin/${branchNameBase} origin/${branchNameHead}`
     )
-    console.log('Checkpoint: 0. start')
+    console.log('Checkpoint: 0. start', github.context)
     process.exit()
 
     // 1. Get the full code coverage of new branch (jest and cypress merged)

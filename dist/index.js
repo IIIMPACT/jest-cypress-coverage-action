@@ -5963,7 +5963,7 @@ function main() {
             const branchNameBase = (_a = github.context.payload.pull_request) === null || _a === void 0 ? void 0 : _a.base.ref;
             const branchNameHead = (_b = github.context.payload.pull_request) === null || _b === void 0 ? void 0 : _b.head.ref;
             yield execSync(`git diff --name-only origin/${branchNameBase} origin/${branchNameHead}`);
-            console.log('Checkpoint: 0. start');
+            console.log('Checkpoint: 0. start', github.context);
             process.exit();
             // 1. Get the full code coverage of new branch (jest and cypress merged)
             //    a. Execute tests
