@@ -19,7 +19,7 @@ async function main(): Promise<void> {
     const prNumber = github.context.issue.number
     const branchNameBase = github.context.payload.pull_request?.base.ref
     const branchNameHead = github.context.payload.pull_request?.head.ref
-    console.log('Checkpoint: 0. start', github.context)
+    console.log('Checkpoint: 0. start', github.context.payload.pull_request)
     await execSync(
       `git diff --name-only origin/${branchNameBase} origin/${branchNameHead}`
     )
