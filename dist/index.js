@@ -5745,7 +5745,7 @@ function wrappy (fn, cb) {
 "use strict";
 var __webpack_unused_export__;
 
-/* eslint-disable no-console */
+// /* eslint-disable no-console */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // import {CoverageReport} from './Model/CoverageReport'
 // import {DiffCoverageReport} from './Model/DiffCoverageReport'
@@ -5833,7 +5833,7 @@ class DiffChecker {
         return 0;
     }
     getPercentage(coverageData /*CoverageData*/) {
-        console.log('coverageData: ', coverageData);
+        // console.log('coverageData: ', coverageData)
         return coverageData.pct;
     }
 }
@@ -6092,7 +6092,7 @@ function main() {
             //    d. get coverage diff
             const diffChecker = new DiffChecker(fullCodeCoverageSummaryNew, fullCodeCoverageSummaryOld);
             let messageToPost = `Code coverage diff between base branch:${branchNameBase} and head branch: ${branchNameHead} \n`;
-            const fullCoverage = true;
+            const fullCoverage = false;
             const coverageDetails = diffChecker.getCoverageDetails(!fullCoverage, `${currentDirectory}/`);
             if (coverageDetails.length === 0) {
                 messageToPost =
