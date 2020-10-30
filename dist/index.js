@@ -5965,10 +5965,11 @@ function main() {
                 required: true
             }));
             console.log('prCoverageThreshold: ', prCoverageThreshold);
+            console.log('prCoverageThreshold.global: ', prCoverageThreshold.global);
             console.log('prCoverageThreshold type: ', typeof prCoverageThreshold);
             const fullCoverageDiff = core.getInput('fullCoverageDiff', {
                 required: true
-            });
+            }) === 'true';
             console.log('fullCoverageDiff: ', fullCoverageDiff);
             console.log('fullCoverageDiff type: ', typeof fullCoverageDiff);
             const githubClient = github.getOctokit(githubToken);
@@ -6003,22 +6004,6 @@ function main() {
                 .trim();
             let thresholdMessageToPost = `## Code coverage \n### Code coverage for changed files in ${branchNameHead} \n`;
             const thresholdCoverageDetails = thresholdChecker.getCoverageDetails(`${currentDirectory}/`);
-            //Check if passed
-            let passed = true;
-            const { total: { branches: { pct: pctBranches }, lines: { pct: pctLines }, statements: { pct: pctStatements }, functions: { pct: pctFunctions } } } = prCodeCoverageSummaryNew;
-            if (pctBranches < prCoverageThreshold.global.branches) {
-                passed = false;
-            }
-            else if (pctLines < prCoverageThreshold.global.lines) {
-                passed = false;
-            }
-            else if (pctStatements < prCoverageThreshold.global.statements) {
-                passed = false;
-            }
-            else if (pctFunctions < prCoverageThreshold.global.functions) {
-                passed = false;
-            }
-            console.log('HAS PASSED: ', passed);
             if (thresholdCoverageDetails.length === 0) {
                 thresholdMessageToPost +=
                     'No changes to code coverage between the base branch and the head branch';
@@ -6036,6 +6021,25 @@ function main() {
                 issue_number: prNumber
             });
             console.log('Checkpoint: 4. Threshold message posted');
+            //Check if passed
+            let passed = true;
+            const { total: { branches: { pct: pctBranches }, lines: { pct: pctLines }, statements: { pct: pctStatements }, functions: { pct: pctFunctions } } } = prCodeCoverageSummaryNew;
+            if (pctBranches < prCoverageThreshold.global.branches) {
+                passed = false;
+            }
+            else if (pctLines < prCoverageThreshold.global.lines) {
+                passed = false;
+            }
+            else if (pctStatements < prCoverageThreshold.global.statements) {
+                passed = false;
+            }
+            else if (pctFunctions < prCoverageThreshold.global.functions) {
+                passed = false;
+            }
+            console.log('HAS PASSED: ', passed);
+            if (!passed) {
+                throw new Error('PR does not meet code coverage threshold');
+            }
             // Get development branch coverage
             //    a. checkout dev branch 2. get coverage diff and display
             yield execSync('git fetch');
@@ -6053,7 +6057,7 @@ function main() {
             //    d. get coverage diff
             const diffChecker = new DiffChecker(fullCodeCoverageSummaryNew, fullCodeCoverageSummaryOld);
             let messageToPost = `## Coverage diff \n### Code coverage diff between base branch:${branchNameBase} and head branch: ${branchNameHead} \n`;
-            const coverageDetails = diffChecker.getCoverageDetails(false, `${currentDirectory}/`);
+            const coverageDetails = diffChecker.getCoverageDetails(fullCoverageDiff, `${currentDirectory}/`);
             if (coverageDetails.length === 0) {
                 messageToPost +=
                     'No changes to code coverage between the base branch and the head branch';

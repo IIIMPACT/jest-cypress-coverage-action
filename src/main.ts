@@ -21,10 +21,12 @@ async function main(): Promise<void> {
       })
     )
     console.log('prCoverageThreshold: ', prCoverageThreshold)
+    console.log('prCoverageThreshold.global: ', prCoverageThreshold.global)
     console.log('prCoverageThreshold type: ', typeof prCoverageThreshold)
-    const fullCoverageDiff = core.getInput('fullCoverageDiff', {
-      required: true
-    })
+    const fullCoverageDiff =
+      core.getInput('fullCoverageDiff', {
+        required: true
+      }) === 'true'
     console.log('fullCoverageDiff: ', fullCoverageDiff)
     console.log('fullCoverageDiff type: ', typeof fullCoverageDiff)
     const githubClient = github.getOctokit(githubToken)
@@ -78,6 +80,22 @@ async function main(): Promise<void> {
     const thresholdCoverageDetails = thresholdChecker.getCoverageDetails(
       `${currentDirectory}/`
     )
+    if (thresholdCoverageDetails.length === 0) {
+      thresholdMessageToPost +=
+        'No changes to code coverage between the base branch and the head branch'
+    } else {
+      thresholdMessageToPost +=
+        'File | % Stmts | % Branch | % Funcs | % Lines \n -----|---------|----------|---------|------ \n'
+      thresholdMessageToPost += thresholdCoverageDetails.join('\n')
+    }
+    console.log('posting threshold message: ', thresholdMessageToPost)
+    await githubClient.issues.createComment({
+      repo: repoName,
+      owner: repoOwner,
+      body: thresholdMessageToPost,
+      issue_number: prNumber
+    })
+    console.log('Checkpoint: 4. Threshold message posted')
 
     //Check if passed
     let passed = true
@@ -98,24 +116,10 @@ async function main(): Promise<void> {
     } else if (pctFunctions < prCoverageThreshold.global.functions) {
       passed = false
     }
-
     console.log('HAS PASSED: ', passed)
-    if (thresholdCoverageDetails.length === 0) {
-      thresholdMessageToPost +=
-        'No changes to code coverage between the base branch and the head branch'
-    } else {
-      thresholdMessageToPost +=
-        'File | % Stmts | % Branch | % Funcs | % Lines \n -----|---------|----------|---------|------ \n'
-      thresholdMessageToPost += thresholdCoverageDetails.join('\n')
+    if (!passed) {
+      throw new Error('PR does not meet code coverage threshold')
     }
-    console.log('posting threshold message: ', thresholdMessageToPost)
-    await githubClient.issues.createComment({
-      repo: repoName,
-      owner: repoOwner,
-      body: thresholdMessageToPost,
-      issue_number: prNumber
-    })
-    console.log('Checkpoint: 4. Threshold message posted')
 
     // Get development branch coverage
     //    a. checkout dev branch 2. get coverage diff and display
@@ -146,7 +150,7 @@ async function main(): Promise<void> {
 
     let messageToPost = `## Coverage diff \n### Code coverage diff between base branch:${branchNameBase} and head branch: ${branchNameHead} \n`
     const coverageDetails = diffChecker.getCoverageDetails(
-      false,
+      fullCoverageDiff,
       `${currentDirectory}/`
     )
     if (coverageDetails.length === 0) {
