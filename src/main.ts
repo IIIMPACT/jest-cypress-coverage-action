@@ -146,7 +146,7 @@ async function main(): Promise<void> {
 
     let messageToPost = `## Coverage diff \n### Code coverage diff between base branch:${branchNameBase} and head branch: ${branchNameHead} \n`
     const coverageDetails = diffChecker.getCoverageDetails(
-      !fullCoverageDiff,
+      false,
       `${currentDirectory}/`
     )
     if (coverageDetails.length === 0) {

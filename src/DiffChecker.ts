@@ -62,7 +62,10 @@ export class DiffChecker {
     }
   }
 
-  getCoverageDetails(diffOnly: boolean, currentDirectory: string): string[] {
+  getCoverageDetails(
+    fullCoverageDiff: boolean,
+    currentDirectory: string
+  ): string[] {
     const keys = Object.keys(this.diffCoverageReport)
     const returnStrings: string[] = []
     for (const key of keys) {
@@ -74,7 +77,7 @@ export class DiffChecker {
           )
         )
       } else {
-        if (!diffOnly) {
+        if (fullCoverageDiff) {
           returnStrings.push(
             `${key.replace(currentDirectory, '')} | ${
               this.diffCoverageReport[key].statements.newPct

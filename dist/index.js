@@ -5799,7 +5799,7 @@ class DiffChecker {
             }
         }
     }
-    getCoverageDetails(diffOnly, currentDirectory) {
+    getCoverageDetails(fullCoverageDiff, currentDirectory) {
         const keys = Object.keys(this.diffCoverageReport);
         const returnStrings = [];
         for (const key of keys) {
@@ -5807,7 +5807,7 @@ class DiffChecker {
                 returnStrings.push(this.createDiffLine(key.replace(currentDirectory, ''), this.diffCoverageReport[key]));
             }
             else {
-                if (!diffOnly) {
+                if (fullCoverageDiff) {
                     returnStrings.push(`${key.replace(currentDirectory, '')} | ${this.diffCoverageReport[key].statements.newPct} | ${this.diffCoverageReport[key].branches.newPct} | ${this.diffCoverageReport[key].functions.newPct} | ${this.diffCoverageReport[key].lines.newPct}`);
                 }
             }
@@ -6053,7 +6053,7 @@ function main() {
             //    d. get coverage diff
             const diffChecker = new DiffChecker(fullCodeCoverageSummaryNew, fullCodeCoverageSummaryOld);
             let messageToPost = `## Coverage diff \n### Code coverage diff between base branch:${branchNameBase} and head branch: ${branchNameHead} \n`;
-            const coverageDetails = diffChecker.getCoverageDetails(!fullCoverageDiff, `${currentDirectory}/`);
+            const coverageDetails = diffChecker.getCoverageDetails(false, `${currentDirectory}/`);
             if (coverageDetails.length === 0) {
                 messageToPost +=
                     'No changes to code coverage between the base branch and the head branch';
