@@ -14,7 +14,7 @@ inputs:
     description: 'get the full coverage with diff or only the diff'
     required: false
     default: false
-  check_for_duplicate_msg:
+  checkForDuplicateMessages:
     description: 'check if the message is already there and replace that message or create a new message each time'
     required: false
     default: false

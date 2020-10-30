@@ -96,6 +96,7 @@ async function main(): Promise<void> {
       thresholdMessageToPost +=
         'File | % Stmts | % Branch | % Funcs | % Lines \n -----|---------|----------|---------|------ \n'
       thresholdMessageToPost += thresholdCoverageDetails.join('\n')
+      thresholdMessageToPost += '\n'
     }
 
     //Check if passed
@@ -217,6 +218,7 @@ async function main(): Promise<void> {
         messageToPost +=
           'File | % Stmts | % Branch | % Funcs | % Lines \n -----|---------|----------|---------|------ \n'
         messageToPost += coverageDetails.join('\n')
+        messageToPost += '\n'
       }
       if (cypressError) {
         messageToPost += '#### Cypress did not run!!!\n'

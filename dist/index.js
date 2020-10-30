@@ -6003,6 +6003,7 @@ function main() {
                 thresholdMessageToPost +=
                     'File | % Stmts | % Branch | % Funcs | % Lines \n -----|---------|----------|---------|------ \n';
                 thresholdMessageToPost += thresholdCoverageDetails.join('\n');
+                thresholdMessageToPost += '\n';
             }
             //Check if passed
             let passed = true;
@@ -6099,6 +6100,7 @@ function main() {
                     messageToPost +=
                         'File | % Stmts | % Branch | % Funcs | % Lines \n -----|---------|----------|---------|------ \n';
                     messageToPost += coverageDetails.join('\n');
+                    messageToPost += '\n';
                 }
                 if (cypressError) {
                     messageToPost += '#### Cypress did not run!!!\n';
