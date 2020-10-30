@@ -14,9 +14,15 @@ export class ThresholdChecker {
     coverageReport: any /*CoverageReport*/,
     coverageThreshold: any /*CoverageReport*/
   ) {
+    console.log('coverageReport: ', coverageReport)
+    console.log('coverageThreshold: ', coverageThreshold)
     const reportKeys = Object.keys(coverageReport)
+    console.log('reportKeys: ', reportKeys)
     const coverageReportObj: {[key: string]: any} = {}
+    console.log('coverageReportObj: ', coverageReportObj)
     for (const key of reportKeys) {
+      console.log('key: ', key)
+      console.log('coverageReport[key]: ', coverageReport[key])
       coverageReportObj[key] = {
         branches: this.getPassFail(
           coverageReport[key].branches,

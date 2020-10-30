@@ -88,13 +88,17 @@ async function main(): Promise<void> {
     )
     console.log('Checkpoint: 3. PR merge completed')
 
-    const prCodeCoverageNew = await JSON.parse(
-      fs.readFileSync('coverage/coverage-final.json').toString()
+    // const prCodeCoverageNew = await JSON.parse(
+    //   fs.readFileSync('coverage/coverage-final.json').toString()
+    // )
+
+    const prCodeCoverageSummaryNew = await JSON.parse(
+      fs.readFileSync('coverage/coverage-summary.json').toString()
     )
-    console.log('Checkpoint: 3b. PR merge completed', prCodeCoverageNew)
+    console.log('Checkpoint: 3b. PR merge completed', prCodeCoverageSummaryNew)
 
     //    a. Check thresholds
-    const thresholdChecker = new ThresholdChecker(prCodeCoverageNew, {})
+    const thresholdChecker = new ThresholdChecker(prCodeCoverageSummaryNew, {})
 
     //    a. Post message
     const currentDirectory = await execSync('pwd')

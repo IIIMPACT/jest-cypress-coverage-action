@@ -5861,9 +5861,15 @@ class ThresholdChecker {
     constructor(coverageReport /*CoverageReport*/, coverageThreshold /*CoverageReport*/) {
         this.coverageReport = [];
         this.pass = true;
+        console.log('coverageReport: ', coverageReport);
+        console.log('coverageThreshold: ', coverageThreshold);
         const reportKeys = Object.keys(coverageReport);
+        console.log('reportKeys: ', reportKeys);
         const coverageReportObj = {};
+        console.log('coverageReportObj: ', coverageReportObj);
         for (const key of reportKeys) {
+            console.log('key: ', key);
+            console.log('coverageReport[key]: ', coverageReport[key]);
             coverageReportObj[key] = {
                 branches: this.getPassFail(coverageReport[key].branches, coverageThreshold.branches),
                 statements: this.getPassFail(coverageReport[key].statements, coverageThreshold.statements),
@@ -6017,10 +6023,13 @@ function main() {
             yield execSync(`git fetch origin ${branchNameHead}:${branchNameHead}`);
             yield execSync(`npm run merge  -- --report ./jest-coverage-full/coverage-final.json --changedSince=${branchNameBase}`);
             console.log('Checkpoint: 3. PR merge completed');
-            const prCodeCoverageNew = yield JSON.parse(fs.readFileSync('coverage/coverage-final.json').toString());
-            console.log('Checkpoint: 3b. PR merge completed', prCodeCoverageNew);
+            // const prCodeCoverageNew = await JSON.parse(
+            //   fs.readFileSync('coverage/coverage-final.json').toString()
+            // )
+            const prCodeCoverageSummaryNew = yield JSON.parse(fs.readFileSync('coverage/coverage-summary.json').toString());
+            console.log('Checkpoint: 3b. PR merge completed', prCodeCoverageSummaryNew);
             //    a. Check thresholds
-            const thresholdChecker = new ThresholdChecker(prCodeCoverageNew, {});
+            const thresholdChecker = new ThresholdChecker(prCodeCoverageSummaryNew, {});
             //    a. Post message
             const currentDirectory = yield execSync('pwd')
                 .toString()
