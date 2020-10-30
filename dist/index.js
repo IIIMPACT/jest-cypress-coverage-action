@@ -6009,18 +6009,30 @@ function main() {
             const { total: { branches: { pct: pctBranches }, lines: { pct: pctLines }, statements: { pct: pctStatements }, functions: { pct: pctFunctions } } } = prCodeCoverageSummaryNew;
             if (pctBranches < prCoverageThreshold.global.branches) {
                 passed = false;
+                console.log(`
+        Branches: ${pctBranches}:${prCoverageThreshold.global.branches} (${pctBranches <
+                    prCoverageThreshold.global.branches}) passed:${passed}`);
                 thresholdMessageToPost += `- Branches coverage of ${pctBranches} does not meet required coverage of ${prCoverageThreshold.global.branches}`;
             }
             else if (pctLines < prCoverageThreshold.global.lines) {
                 passed = false;
-                thresholdMessageToPost += `- Branches coverage of ${pctLines} does not meet required coverage of ${prCoverageThreshold.global.lines}`;
+                console.log(`
+        Lines: ${pctLines}:${prCoverageThreshold.global.lines} (${pctLines <
+                    prCoverageThreshold.global.lines}) passed:${passed}`);
+                thresholdMessageToPost += `- Lines coverage of ${pctLines} does not meet required coverage of ${prCoverageThreshold.global.lines}`;
             }
             else if (pctStatements < prCoverageThreshold.global.statements) {
                 passed = false;
-                thresholdMessageToPost += `- Branches coverage of ${pctStatements} does not meet required coverage of ${prCoverageThreshold.global.statements}`;
+                console.log(`
+        Statements: ${pctStatements}:${prCoverageThreshold.global.statements} (${pctStatements <
+                    prCoverageThreshold.global.statements}) passed:${passed}`);
+                thresholdMessageToPost += `- Statements coverage of ${pctStatements} does not meet required coverage of ${prCoverageThreshold.global.statements}`;
             }
             else if (pctFunctions < prCoverageThreshold.global.functions) {
-                thresholdMessageToPost += `- Branches coverage of ${pctFunctions} does not meet required coverage of ${prCoverageThreshold.global.functions}`;
+                console.log(`
+        Functions: ${pctFunctions}:${prCoverageThreshold.global.functions} (${pctFunctions <
+                    prCoverageThreshold.global.functions}) passed:${passed}`);
+                thresholdMessageToPost += `- Functions coverage of ${pctFunctions} does not meet required coverage of ${prCoverageThreshold.global.functions}`;
                 passed = false;
             }
             if (cypressError) {
