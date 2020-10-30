@@ -193,7 +193,6 @@ async function main(): Promise<void> {
         'File | % Stmts | % Branch | % Funcs | % Lines \n -----|---------|----------|---------|------ \n'
       messageToPost += coverageDetails.join('\n')
     }
-    console.log('diff messageToPost Final: ', messageToPost)
     await githubClient.issues.createComment({
       repo: repoName,
       owner: repoOwner,

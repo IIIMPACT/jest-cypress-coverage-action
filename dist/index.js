@@ -6103,7 +6103,6 @@ function main() {
                     'File | % Stmts | % Branch | % Funcs | % Lines \n -----|---------|----------|---------|------ \n';
                 messageToPost += coverageDetails.join('\n');
             }
-            console.log('diff messageToPost Final: ', messageToPost);
             yield githubClient.issues.createComment({
                 repo: repoName,
                 owner: repoOwner,
