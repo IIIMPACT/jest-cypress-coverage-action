@@ -5980,6 +5980,7 @@ function main() {
             // 1. Get the full code coverage of new branch (jest and cypress merged)
             //    a. Execute tests
             yield execSync('npm run test:all'); // should include cypress here or add it as separate
+            yield execSync('npm run test:cypress:staging'); // should include cypress here or add it as separate
             console.log('Checkpoint: 1. tests completed');
             //    b Merge coverages
             yield execSync(`npm run merge  -- --report ./jest-coverage-full/coverage-final.json`);
@@ -6013,6 +6014,25 @@ function main() {
                     'File | % Stmts | % Branch | % Funcs | % Lines \n -----|---------|----------|---------|------ \n';
                 thresholdMessageToPost += thresholdCoverageDetails.join('\n');
             }
+            //Check if passed
+            let passed = true;
+            const { total: { branches: { pct: pctBranches }, lines: { pct: pctLines }, statements: { pct: pctStatements }, functions: { pct: pctFunctions } } } = prCodeCoverageSummaryNew;
+            if (pctBranches < prCoverageThreshold.global.branches) {
+                passed = false;
+                thresholdMessageToPost += `- Branches coverage of ${pctBranches} does not meet required coverage of ${prCoverageThreshold.global.branches}`;
+            }
+            else if (pctLines < prCoverageThreshold.global.lines) {
+                passed = false;
+                thresholdMessageToPost += `- Branches coverage of ${pctLines} does not meet required coverage of ${prCoverageThreshold.global.lines}`;
+            }
+            else if (pctStatements < prCoverageThreshold.global.statements) {
+                passed = false;
+                thresholdMessageToPost += `- Branches coverage of ${pctStatements} does not meet required coverage of ${prCoverageThreshold.global.statements}`;
+            }
+            else if (pctFunctions < prCoverageThreshold.global.functions) {
+                thresholdMessageToPost += `- Branches coverage of ${pctFunctions} does not meet required coverage of ${prCoverageThreshold.global.functions}`;
+                passed = false;
+            }
             console.log('posting threshold message: ', thresholdMessageToPost);
             yield githubClient.issues.createComment({
                 repo: repoName,
@@ -6021,59 +6041,51 @@ function main() {
                 issue_number: prNumber
             });
             console.log('Checkpoint: 4. Threshold message posted');
-            //Check if passed
-            let passed = true;
-            const { total: { branches: { pct: pctBranches }, lines: { pct: pctLines }, statements: { pct: pctStatements }, functions: { pct: pctFunctions } } } = prCodeCoverageSummaryNew;
-            if (pctBranches < prCoverageThreshold.global.branches) {
-                passed = false;
-            }
-            else if (pctLines < prCoverageThreshold.global.lines) {
-                passed = false;
-            }
-            else if (pctStatements < prCoverageThreshold.global.statements) {
-                passed = false;
-            }
-            else if (pctFunctions < prCoverageThreshold.global.functions) {
-                passed = false;
-            }
             console.log('HAS PASSED: ', passed);
             if (!passed) {
                 throw new Error('PR does not meet code coverage threshold');
             }
-            // Get development branch coverage
-            //    a. checkout dev branch 2. get coverage diff and display
-            yield execSync('git fetch');
-            yield execSync('git stash');
-            yield execSync(`git checkout --progress --force ${branchNameBase}`);
-            console.log('Checkpoint: 5. development checkout competed');
-            //    b. run tests
-            yield execSync('npm run test:all');
-            console.log('Checkpoint: 6. development tests completed');
-            //    c. merge jest/cypress
-            yield execSync(`npm run merge  -- --report ./jest-coverage-full/coverage-final.json`);
-            console.log('Checkpoint: 7. development merge completed');
-            const fullCodeCoverageSummaryOld = yield JSON.parse(fs.readFileSync('coverage/coverage-summary.json').toString());
-            // console.log('Checkpoint: 7b. fullCodeCoverageNew', fullCodeCoverageNew.)
-            //    d. get coverage diff
-            const diffChecker = new DiffChecker(fullCodeCoverageSummaryNew, fullCodeCoverageSummaryOld);
-            let messageToPost = `## Coverage diff \n### Code coverage diff between base branch:${branchNameBase} and head branch: ${branchNameHead} \n`;
-            const coverageDetails = diffChecker.getCoverageDetails(fullCoverageDiff, `${currentDirectory}/`);
-            if (coverageDetails.length === 0) {
-                messageToPost +=
-                    'No changes to code coverage between the base branch and the head branch';
+            // Failing diff should not fail the PR
+            try {
+                // Get development branch coverage
+                //    a. checkout dev branch 2. get coverage diff and display
+                yield execSync('git fetch');
+                yield execSync('git stash');
+                yield execSync(`git checkout --progress --force ${branchNameBase}`);
+                console.log('Checkpoint: 5. development checkout competed');
+                //    b. run tests
+                yield execSync('npm run test:all');
+                yield execSync('npm run test:cypress:staging'); // should include cypress here or add it as separate
+                console.log('Checkpoint: 6. development tests completed');
+                //    c. merge jest/cypress
+                yield execSync(`npm run merge  -- --report ./jest-coverage-full/coverage-final.json`);
+                console.log('Checkpoint: 7. development merge completed');
+                const fullCodeCoverageSummaryOld = yield JSON.parse(fs.readFileSync('coverage/coverage-summary.json').toString());
+                // console.log('Checkpoint: 7b. fullCodeCoverageNew', fullCodeCoverageNew.)
+                //    d. get coverage diff
+                const diffChecker = new DiffChecker(fullCodeCoverageSummaryNew, fullCodeCoverageSummaryOld);
+                let messageToPost = `## Coverage diff \n### Code coverage diff between base branch:${branchNameBase} and head branch: ${branchNameHead} \n`;
+                const coverageDetails = diffChecker.getCoverageDetails(fullCoverageDiff, `${currentDirectory}/`);
+                if (coverageDetails.length === 0) {
+                    messageToPost +=
+                        'No changes to code coverage between the base branch and the head branch';
+                }
+                else {
+                    messageToPost +=
+                        'File | % Stmts | % Branch | % Funcs | % Lines \n -----|---------|----------|---------|------ \n';
+                    messageToPost += coverageDetails.join('\n');
+                }
+                yield githubClient.issues.createComment({
+                    repo: repoName,
+                    owner: repoOwner,
+                    body: messageToPost,
+                    issue_number: prNumber
+                });
+                console.log('Checkpoint: 8. diff message posted');
             }
-            else {
-                messageToPost +=
-                    'File | % Stmts | % Branch | % Funcs | % Lines \n -----|---------|----------|---------|------ \n';
-                messageToPost += coverageDetails.join('\n');
+            catch (error) {
+                console.log('Error with diff', error);
             }
-            yield githubClient.issues.createComment({
-                repo: repoName,
-                owner: repoOwner,
-                body: messageToPost,
-                issue_number: prNumber
-            });
-            console.log('Checkpoint: 8. diff message posted');
         }
         catch (error) {
             core.setFailed(error.message);

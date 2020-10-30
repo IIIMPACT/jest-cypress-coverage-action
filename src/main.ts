@@ -38,6 +38,7 @@ async function main(): Promise<void> {
     // 1. Get the full code coverage of new branch (jest and cypress merged)
     //    a. Execute tests
     await execSync('npm run test:all') // should include cypress here or add it as separate
+    await execSync('npm run test:cypress:staging') // should include cypress here or add it as separate
     console.log('Checkpoint: 1. tests completed')
 
     //    b Merge coverages
@@ -88,14 +89,6 @@ async function main(): Promise<void> {
         'File | % Stmts | % Branch | % Funcs | % Lines \n -----|---------|----------|---------|------ \n'
       thresholdMessageToPost += thresholdCoverageDetails.join('\n')
     }
-    console.log('posting threshold message: ', thresholdMessageToPost)
-    await githubClient.issues.createComment({
-      repo: repoName,
-      owner: repoOwner,
-      body: thresholdMessageToPost,
-      issue_number: prNumber
-    })
-    console.log('Checkpoint: 4. Threshold message posted')
 
     //Check if passed
     let passed = true
@@ -109,65 +102,85 @@ async function main(): Promise<void> {
     } = prCodeCoverageSummaryNew
     if (pctBranches < prCoverageThreshold.global.branches) {
       passed = false
+      thresholdMessageToPost += `- Branches coverage of ${pctBranches} does not meet required coverage of ${prCoverageThreshold.global.branches}`
     } else if (pctLines < prCoverageThreshold.global.lines) {
       passed = false
+      thresholdMessageToPost += `- Branches coverage of ${pctLines} does not meet required coverage of ${prCoverageThreshold.global.lines}`
     } else if (pctStatements < prCoverageThreshold.global.statements) {
       passed = false
+      thresholdMessageToPost += `- Branches coverage of ${pctStatements} does not meet required coverage of ${prCoverageThreshold.global.statements}`
     } else if (pctFunctions < prCoverageThreshold.global.functions) {
+      thresholdMessageToPost += `- Branches coverage of ${pctFunctions} does not meet required coverage of ${prCoverageThreshold.global.functions}`
       passed = false
     }
+
+    console.log('posting threshold message: ', thresholdMessageToPost)
+    await githubClient.issues.createComment({
+      repo: repoName,
+      owner: repoOwner,
+      body: thresholdMessageToPost,
+      issue_number: prNumber
+    })
+    console.log('Checkpoint: 4. Threshold message posted')
+
     console.log('HAS PASSED: ', passed)
     if (!passed) {
       throw new Error('PR does not meet code coverage threshold')
     }
 
-    // Get development branch coverage
-    //    a. checkout dev branch 2. get coverage diff and display
-    await execSync('git fetch')
-    await execSync('git stash')
-    await execSync(`git checkout --progress --force ${branchNameBase}`)
-    console.log('Checkpoint: 5. development checkout competed')
+    // Failing diff should not fail the PR
+    try {
+      // Get development branch coverage
+      //    a. checkout dev branch 2. get coverage diff and display
+      await execSync('git fetch')
+      await execSync('git stash')
+      await execSync(`git checkout --progress --force ${branchNameBase}`)
+      console.log('Checkpoint: 5. development checkout competed')
 
-    //    b. run tests
-    await execSync('npm run test:all')
-    console.log('Checkpoint: 6. development tests completed')
+      //    b. run tests
+      await execSync('npm run test:all')
+      await execSync('npm run test:cypress:staging') // should include cypress here or add it as separate
+      console.log('Checkpoint: 6. development tests completed')
 
-    //    c. merge jest/cypress
-    await execSync(
-      `npm run merge  -- --report ./jest-coverage-full/coverage-final.json`
-    )
-    console.log('Checkpoint: 7. development merge completed')
-    const fullCodeCoverageSummaryOld = await JSON.parse(
-      fs.readFileSync('coverage/coverage-summary.json').toString()
-    )
+      //    c. merge jest/cypress
+      await execSync(
+        `npm run merge  -- --report ./jest-coverage-full/coverage-final.json`
+      )
+      console.log('Checkpoint: 7. development merge completed')
+      const fullCodeCoverageSummaryOld = await JSON.parse(
+        fs.readFileSync('coverage/coverage-summary.json').toString()
+      )
 
-    // console.log('Checkpoint: 7b. fullCodeCoverageNew', fullCodeCoverageNew.)
-    //    d. get coverage diff
-    const diffChecker = new DiffChecker(
-      fullCodeCoverageSummaryNew,
-      fullCodeCoverageSummaryOld
-    )
+      // console.log('Checkpoint: 7b. fullCodeCoverageNew', fullCodeCoverageNew.)
+      //    d. get coverage diff
+      const diffChecker = new DiffChecker(
+        fullCodeCoverageSummaryNew,
+        fullCodeCoverageSummaryOld
+      )
 
-    let messageToPost = `## Coverage diff \n### Code coverage diff between base branch:${branchNameBase} and head branch: ${branchNameHead} \n`
-    const coverageDetails = diffChecker.getCoverageDetails(
-      fullCoverageDiff,
-      `${currentDirectory}/`
-    )
-    if (coverageDetails.length === 0) {
-      messageToPost +=
-        'No changes to code coverage between the base branch and the head branch'
-    } else {
-      messageToPost +=
-        'File | % Stmts | % Branch | % Funcs | % Lines \n -----|---------|----------|---------|------ \n'
-      messageToPost += coverageDetails.join('\n')
+      let messageToPost = `## Coverage diff \n### Code coverage diff between base branch:${branchNameBase} and head branch: ${branchNameHead} \n`
+      const coverageDetails = diffChecker.getCoverageDetails(
+        fullCoverageDiff,
+        `${currentDirectory}/`
+      )
+      if (coverageDetails.length === 0) {
+        messageToPost +=
+          'No changes to code coverage between the base branch and the head branch'
+      } else {
+        messageToPost +=
+          'File | % Stmts | % Branch | % Funcs | % Lines \n -----|---------|----------|---------|------ \n'
+        messageToPost += coverageDetails.join('\n')
+      }
+      await githubClient.issues.createComment({
+        repo: repoName,
+        owner: repoOwner,
+        body: messageToPost,
+        issue_number: prNumber
+      })
+      console.log('Checkpoint: 8. diff message posted')
+    } catch (error) {
+      console.log('Error with diff', error)
     }
-    await githubClient.issues.createComment({
-      repo: repoName,
-      owner: repoOwner,
-      body: messageToPost,
-      issue_number: prNumber
-    })
-    console.log('Checkpoint: 8. diff message posted')
   } catch (error) {
     core.setFailed(error.message)
   }
