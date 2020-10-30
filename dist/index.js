@@ -5985,7 +5985,7 @@ function main() {
             // 2. Get the full code coverage of changed files (jest and cypress merged)
             yield execSync(`git fetch origin ${branchNameBase}:${branchNameBase}`);
             yield execSync(`git fetch origin ${branchNameHead}:${branchNameHead}`);
-            yield execSync(`npm run merge  -- --report ./jest-coverage-full/coverage-final.json --report ./.nyc_output/out.json --changedSince=${branchNameBase}`);
+            yield execSync(`npm run merge  -- --report ./jest-coverage-full/coverage-final.json  ${cypressReport} --changedSince=${branchNameBase}`);
             const prCodeCoverageSummaryNew = yield JSON.parse(fs.readFileSync('coverage/coverage-summary.json').toString());
             //    a. Check thresholds
             const thresholdChecker = new ThresholdChecker(prCodeCoverageSummaryNew, prCoverageThreshold.global);

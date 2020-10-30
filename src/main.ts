@@ -68,7 +68,7 @@ async function main(): Promise<void> {
     await execSync(`git fetch origin ${branchNameBase}:${branchNameBase}`)
     await execSync(`git fetch origin ${branchNameHead}:${branchNameHead}`)
     await execSync(
-      `npm run merge  -- --report ./jest-coverage-full/coverage-final.json --report ./.nyc_output/out.json --changedSince=${branchNameBase}`
+      `npm run merge  -- --report ./jest-coverage-full/coverage-final.json  ${cypressReport} --changedSince=${branchNameBase}`
     )
 
     const prCodeCoverageSummaryNew = await JSON.parse(
