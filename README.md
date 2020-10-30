@@ -16,16 +16,8 @@ GitHub action to merge jest and cypress test coverages.
 
 - [Screenshots](#screenshots)
 - [Usage](#usage)
-  - [Example of matching files](#example-of-matching-files)
-  - [Examples of non-matching files](#examples-of-non-matching-files)
-  - [Examples of env](#examples-of-env)
+  - [Basic Usage](#basic-usage)
 - [Behavior](#behavior)
-- [Outputs](#outputs)
-- [Action event details](#action-event-details)
-  - [Target events](#target-events)
-- [Addition](#addition)
-  - [FROM, TO](#from-to)
-  - [Check only the latest commit differences in a draft Pull Request](#check-only-the-latest-commit-differences-in-a-draft-pull-request)
 - [Author](#author)
 
 </details>
