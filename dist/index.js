@@ -5966,10 +5966,17 @@ function main() {
             try {
                 if (fs.existsSync('./.nyc_output/out.json')) {
                     cypressReport = '--report ./.nyc_output/out.json';
+                    console.log('FILE: We have the file1!!!');
+                }
+                else {
+                    cypressReport = '';
+                    console.log('FILE: We have no file else1!!!');
                 }
             }
             catch (err) {
                 console.log('Cypress report unavailable', err);
+                cypressReport = '';
+                console.log('FILE: We have no file1!!!');
             }
             //    b Merge coverages
             yield execSync(`npm run merge  -- --report ./jest-coverage-full/coverage-final.json ${cypressReport}`);
@@ -6053,10 +6060,17 @@ function main() {
                 try {
                     if (fs.existsSync('./.nyc_output/out.json')) {
                         cypressReport = '--report ./.nyc_output/out.json';
+                        console.log('FILE: We have the file2!!!');
+                    }
+                    else {
+                        cypressReport = '';
+                        console.log('FILE: We have no file else2!!!');
                     }
                 }
                 catch (err) {
-                    console.log('Cypress report unavailable', err);
+                    console.log('Cypress report unavailable2', err);
+                    cypressReport = '';
+                    console.log('FILE: We have no file2!!!');
                 }
                 //    c. merge jest/cypress
                 yield execSync(`npm run merge  -- --report ./jest-coverage-full/coverage-final.json ${cypressReport}`);
