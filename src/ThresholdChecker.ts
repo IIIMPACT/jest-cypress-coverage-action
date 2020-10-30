@@ -1,27 +1,11 @@
-// /* eslint-disable no-console */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-// import {CoverageReport} from './Model/CoverageReport'
-// import {DiffCoverageReport} from './Model/DiffCoverageReport'
-// import {CoverageData} from './Model/CoverageData'
-// import {DiffFileCoverageData} from './Model/DiffFileCoverageData'
-
-// import { FileCoverage } from "istanbul-lib-coverage"
 
 export class ThresholdChecker {
-  private coverageReport: any[] /*: DiffCoverageReport*/ = []
-  constructor(
-    coverageReport: any /*CoverageReport*/,
-    coverageThreshold: any /*CoverageReport*/
-  ) {
-    // console.log('coverageReport: ', coverageReport)
-    // console.log('coverageThreshold: ', coverageThreshold)
+  private coverageReport: any[] = []
+  constructor(coverageReport: any, coverageThreshold: any) {
     const reportKeys = Object.keys(coverageReport)
-    // console.log('reportKeys: ', reportKeys)
     const coverageReportObj: {[key: string]: any} = {}
-    // console.log('coverageReportObj: ', coverageReportObj)
     for (const key of reportKeys) {
-      // console.log('key: ', key)
-      // console.log('coverageReport[key]: ', coverageReport[key])
       coverageReportObj[key] = {
         branches: this.getPassFail(
           coverageReport[key].branches,
@@ -93,8 +77,7 @@ export class ThresholdChecker {
     return returnStrings
   }
 
-  private getPercentage(coverageData: any /*CoverageData*/): number {
-    // console.log('here coverageData: ', coverageData)
+  private getPercentage(coverageData: any): number {
     return coverageData.pct
   }
 }

@@ -1,16 +1,8 @@
-// /* eslint-disable no-console */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-// import {CoverageReport} from './Model/CoverageReport'
-// import {DiffCoverageReport} from './Model/DiffCoverageReport'
-// import {CoverageData} from './Model/CoverageData'
-// import {DiffFileCoverageData} from './Model/DiffFileCoverageData'
 
 export class DiffChecker {
-  private diffCoverageReport: any /*: DiffCoverageReport*/ = {}
-  constructor(
-    coverageReportNew: any /*CoverageReport*/,
-    coverageReportOld: any /*CoverageReport*/
-  ) {
+  private diffCoverageReport: any = {}
+  constructor(coverageReportNew: any, coverageReportOld: any) {
     const reportNewKeys = Object.keys(coverageReportNew)
     for (const key of reportNewKeys) {
       this.diffCoverageReport[key] = {
@@ -91,10 +83,7 @@ export class DiffChecker {
     return returnStrings
   }
 
-  private createDiffLine(
-    name: string,
-    diffFileCoverageData: any /*DiffFileCoverageData*/
-  ): string {
+  private createDiffLine(name: string, diffFileCoverageData: any): string {
     if (!diffFileCoverageData.branches.oldPct) {
       return `**${name}** | **${diffFileCoverageData.statements.newPct}** | **${diffFileCoverageData.branches.newPct}** | **${diffFileCoverageData.functions.newPct}** | **${diffFileCoverageData.lines.newPct}**`
     } else if (!diffFileCoverageData.branches.newPct) {
@@ -103,9 +92,7 @@ export class DiffChecker {
     return `${name} | ~~${diffFileCoverageData.statements.oldPct}~~ **${diffFileCoverageData.statements.newPct}** | ~~${diffFileCoverageData.branches.oldPct}~~ **${diffFileCoverageData.branches.newPct}** | ~~${diffFileCoverageData.functions.oldPct}~~ **${diffFileCoverageData.functions.newPct}** | ~~${diffFileCoverageData.lines.oldPct}~~ **${diffFileCoverageData.lines.newPct}**`
   }
 
-  private compareCoverageValues(
-    diffCoverageData: any /*DiffFileCoverageData*/
-  ): number {
+  private compareCoverageValues(diffCoverageData: any): number {
     const keys: ('lines' | 'statements' | 'branches' | 'functions')[] = <
       ('lines' | 'statements' | 'branches' | 'functions')[]
     >Object.keys(diffCoverageData)
@@ -117,8 +104,7 @@ export class DiffChecker {
     return 0
   }
 
-  private getPercentage(coverageData: any /*CoverageData*/): number {
-    // console.log('coverageData: ', coverageData)
+  private getPercentage(coverageData: any): number {
     return coverageData.pct
   }
 }

@@ -5745,16 +5745,11 @@ function wrappy (fn, cb) {
 "use strict";
 var __webpack_unused_export__;
 
-// /* eslint-disable no-console */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-// import {CoverageReport} from './Model/CoverageReport'
-// import {DiffCoverageReport} from './Model/DiffCoverageReport'
-// import {CoverageData} from './Model/CoverageData'
-// import {DiffFileCoverageData} from './Model/DiffFileCoverageData'
 __webpack_unused_export__ = ({ value: true });
 exports.p = void 0;
 class DiffChecker {
-    constructor(coverageReportNew /*CoverageReport*/, coverageReportOld /*CoverageReport*/) {
+    constructor(coverageReportNew, coverageReportOld) {
         this.diffCoverageReport = {};
         const reportNewKeys = Object.keys(coverageReportNew);
         for (const key of reportNewKeys) {
@@ -5814,7 +5809,7 @@ class DiffChecker {
         }
         return returnStrings;
     }
-    createDiffLine(name, diffFileCoverageData /*DiffFileCoverageData*/) {
+    createDiffLine(name, diffFileCoverageData) {
         if (!diffFileCoverageData.branches.oldPct) {
             return `**${name}** | **${diffFileCoverageData.statements.newPct}** | **${diffFileCoverageData.branches.newPct}** | **${diffFileCoverageData.functions.newPct}** | **${diffFileCoverageData.lines.newPct}**`;
         }
@@ -5823,7 +5818,7 @@ class DiffChecker {
         }
         return `${name} | ~~${diffFileCoverageData.statements.oldPct}~~ **${diffFileCoverageData.statements.newPct}** | ~~${diffFileCoverageData.branches.oldPct}~~ **${diffFileCoverageData.branches.newPct}** | ~~${diffFileCoverageData.functions.oldPct}~~ **${diffFileCoverageData.functions.newPct}** | ~~${diffFileCoverageData.lines.oldPct}~~ **${diffFileCoverageData.lines.newPct}**`;
     }
-    compareCoverageValues(diffCoverageData /*DiffFileCoverageData*/) {
+    compareCoverageValues(diffCoverageData) {
         const keys = Object.keys(diffCoverageData);
         for (const key of keys) {
             if (diffCoverageData[key].oldPct !== diffCoverageData[key].newPct) {
@@ -5832,8 +5827,7 @@ class DiffChecker {
         }
         return 0;
     }
-    getPercentage(coverageData /*CoverageData*/) {
-        // console.log('coverageData: ', coverageData)
+    getPercentage(coverageData) {
         return coverageData.pct;
     }
 }
@@ -5848,27 +5842,15 @@ exports.p = DiffChecker;
 "use strict";
 var __webpack_unused_export__;
 
-// /* eslint-disable no-console */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-// import {CoverageReport} from './Model/CoverageReport'
-// import {DiffCoverageReport} from './Model/DiffCoverageReport'
-// import {CoverageData} from './Model/CoverageData'
-// import {DiffFileCoverageData} from './Model/DiffFileCoverageData'
 __webpack_unused_export__ = ({ value: true });
 exports.C = void 0;
-// import { FileCoverage } from "istanbul-lib-coverage"
 class ThresholdChecker {
-    constructor(coverageReport /*CoverageReport*/, coverageThreshold /*CoverageReport*/) {
+    constructor(coverageReport, coverageThreshold) {
         this.coverageReport = [];
-        // console.log('coverageReport: ', coverageReport)
-        // console.log('coverageThreshold: ', coverageThreshold)
         const reportKeys = Object.keys(coverageReport);
-        // console.log('reportKeys: ', reportKeys)
         const coverageReportObj = {};
-        // console.log('coverageReportObj: ', coverageReportObj)
         for (const key of reportKeys) {
-            // console.log('key: ', key)
-            // console.log('coverageReport[key]: ', coverageReport[key])
             coverageReportObj[key] = {
                 branches: this.getPassFail(coverageReport[key].branches, coverageThreshold.branches),
                 statements: this.getPassFail(coverageReport[key].statements, coverageThreshold.statements),
@@ -5919,8 +5901,7 @@ class ThresholdChecker {
         }
         return returnStrings;
     }
-    getPercentage(coverageData /*CoverageData*/) {
-        // console.log('here coverageData: ', coverageData)
+    getPercentage(coverageData) {
         return coverageData.pct;
     }
 }
@@ -5950,7 +5931,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 const github = __webpack_require__(438);
 const core = __webpack_require__(186);
 const execSync = __webpack_require__(129).execSync;
-// const fs = require('fs-extra')
 const fs = __webpack_require__(747);
 const DiffChecker = __webpack_require__(458)/* .DiffChecker */ .p;
 const ThresholdChecker = __webpack_require__(921)/* .ThresholdChecker */ .C;
@@ -5964,39 +5944,26 @@ function main() {
             const prCoverageThreshold = JSON.parse(core.getInput('prCoverageThreshold', {
                 required: true
             }));
-            console.log('prCoverageThreshold: ', prCoverageThreshold);
-            console.log('prCoverageThreshold.global: ', prCoverageThreshold.global);
-            console.log('prCoverageThreshold type: ', typeof prCoverageThreshold);
             const fullCoverageDiff = core.getInput('fullCoverageDiff', {
                 required: true
             }) === 'true';
-            console.log('fullCoverageDiff: ', fullCoverageDiff);
-            console.log('fullCoverageDiff type: ', typeof fullCoverageDiff);
             const githubClient = github.getOctokit(githubToken);
             const prNumber = github.context.issue.number;
             const branchNameBase = (_a = github.context.payload.pull_request) === null || _a === void 0 ? void 0 : _a.base.ref;
             const branchNameHead = (_b = github.context.payload.pull_request) === null || _b === void 0 ? void 0 : _b.head.ref;
-            console.log('Checkpoint: 0. start');
             // 1. Get the full code coverage of new branch (jest and cypress merged)
             //    a. Execute tests
             yield execSync('npm run test:all'); // should include cypress here or add it as separate
             yield execSync('npm run test:cypress:staging'); // should include cypress here or add it as separate
-            console.log('Checkpoint: 1. tests completed');
             //    b Merge coverages
-            yield execSync(`npm run merge  -- --report ./jest-coverage-full/coverage-final.json`);
-            console.log('Checkpoint: 2. first merge completed');
-            // const fullCodeCoverageNew = await JSON.parse(
-            //   fs.readFileSync('coverage/coverage-final.json').toString()
-            // )
+            yield execSync(`npm run merge  -- --report ./jest-coverage-full/coverage-final.json --report ./.nyc_output/out.json`);
             const fullCodeCoverageSummaryNew = yield JSON.parse(fs.readFileSync('coverage/coverage-summary.json').toString());
             // Diff coverage
             // 2. Get the full code coverage of changed files (jest and cypress merged)
             yield execSync(`git fetch origin ${branchNameBase}:${branchNameBase}`);
             yield execSync(`git fetch origin ${branchNameHead}:${branchNameHead}`);
-            yield execSync(`npm run merge  -- --report ./jest-coverage-full/coverage-final.json --changedSince=${branchNameBase}`);
-            console.log('Checkpoint: 3. PR merge completed');
+            yield execSync(`npm run merge  -- --report ./jest-coverage-full/coverage-final.json --report ./.nyc_output/out.json --changedSince=${branchNameBase}`);
             const prCodeCoverageSummaryNew = yield JSON.parse(fs.readFileSync('coverage/coverage-summary.json').toString());
-            console.log('Checkpoint: 3b. PR merge completed', prCodeCoverageSummaryNew);
             //    a. Check thresholds
             const thresholdChecker = new ThresholdChecker(prCodeCoverageSummaryNew, prCoverageThreshold.global);
             //    a. Post message
@@ -6033,15 +6000,12 @@ function main() {
                 thresholdMessageToPost += `- Branches coverage of ${pctFunctions} does not meet required coverage of ${prCoverageThreshold.global.functions}`;
                 passed = false;
             }
-            console.log('posting threshold message: ', thresholdMessageToPost);
             yield githubClient.issues.createComment({
                 repo: repoName,
                 owner: repoOwner,
                 body: thresholdMessageToPost,
                 issue_number: prNumber
             });
-            console.log('Checkpoint: 4. Threshold message posted');
-            console.log('HAS PASSED: ', passed);
             if (!passed) {
                 throw new Error('PR does not meet code coverage threshold');
             }
@@ -6052,16 +6016,12 @@ function main() {
                 yield execSync('git fetch');
                 yield execSync('git stash');
                 yield execSync(`git checkout --progress --force ${branchNameBase}`);
-                console.log('Checkpoint: 5. development checkout competed');
                 //    b. run tests
                 yield execSync('npm run test:all');
                 yield execSync('npm run test:cypress:staging'); // should include cypress here or add it as separate
-                console.log('Checkpoint: 6. development tests completed');
                 //    c. merge jest/cypress
-                yield execSync(`npm run merge  -- --report ./jest-coverage-full/coverage-final.json`);
-                console.log('Checkpoint: 7. development merge completed');
+                yield execSync(`npm run merge  -- --report ./jest-coverage-full/coverage-final.json --report ./.nyc_output/out.json`);
                 const fullCodeCoverageSummaryOld = yield JSON.parse(fs.readFileSync('coverage/coverage-summary.json').toString());
-                // console.log('Checkpoint: 7b. fullCodeCoverageNew', fullCodeCoverageNew.)
                 //    d. get coverage diff
                 const diffChecker = new DiffChecker(fullCodeCoverageSummaryNew, fullCodeCoverageSummaryOld);
                 let messageToPost = `## Coverage diff \n### Code coverage diff between base branch:${branchNameBase} and head branch: ${branchNameHead} \n`;
@@ -6081,7 +6041,6 @@ function main() {
                     body: messageToPost,
                     issue_number: prNumber
                 });
-                console.log('Checkpoint: 8. diff message posted');
             }
             catch (error) {
                 console.log('Error with diff', error);
