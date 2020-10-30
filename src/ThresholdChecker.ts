@@ -9,7 +9,6 @@
 
 export class ThresholdChecker {
   private coverageReport: any[] /*: DiffCoverageReport*/ = []
-  private pass: boolean = true
   constructor(
     coverageReport: any /*CoverageReport*/,
     coverageThreshold: any /*CoverageReport*/
@@ -64,7 +63,6 @@ export class ThresholdChecker {
     try {
       pct = this.getPercentage(coverage)
     } catch (e) {
-      this.pass = false
       return {
         pct: 'unknown',
         pass: false
@@ -76,7 +74,6 @@ export class ThresholdChecker {
         pass: true
       }
     }
-    this.pass = false
     return {
       pct,
       pass: false
@@ -88,9 +85,9 @@ export class ThresholdChecker {
     for (const fileCoverage of this.coverageReport) {
       const {key, statements, branches, functions, lines} = fileCoverage
       returnStrings.push(
-        `${key.replace(currentDirectory, '')} | ${statements.pct} | ${
-          branches.pct
-        } | ${functions.pct} | ${lines.pct}`
+        `${key.replace(currentDirectory, '')} | <span style="color:blue">${
+          statements.pct
+        }</span> | ${branches.pct} | ${functions.pct} | ${lines.pct}`
       )
     }
     return returnStrings

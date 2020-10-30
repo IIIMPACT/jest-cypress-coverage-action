@@ -5860,7 +5860,6 @@ exports.C = void 0;
 class ThresholdChecker {
     constructor(coverageReport /*CoverageReport*/, coverageThreshold /*CoverageReport*/) {
         this.coverageReport = [];
-        this.pass = true;
         // console.log('coverageReport: ', coverageReport)
         // console.log('coverageThreshold: ', coverageThreshold)
         const reportKeys = Object.keys(coverageReport);
@@ -5896,7 +5895,6 @@ class ThresholdChecker {
             pct = this.getPercentage(coverage);
         }
         catch (e) {
-            this.pass = false;
             return {
                 pct: 'unknown',
                 pass: false
@@ -5908,7 +5906,6 @@ class ThresholdChecker {
                 pass: true
             };
         }
-        this.pass = false;
         return {
             pct,
             pass: false
@@ -5918,7 +5915,7 @@ class ThresholdChecker {
         const returnStrings = [];
         for (const fileCoverage of this.coverageReport) {
             const { key, statements, branches, functions, lines } = fileCoverage;
-            returnStrings.push(`${key.replace(currentDirectory, '')} | ${statements.pct} | ${branches.pct} | ${functions.pct} | ${lines.pct}`);
+            returnStrings.push(`${key.replace(currentDirectory, '')} | <span style="color:blue">${statements.pct}</span> | ${branches.pct} | ${functions.pct} | ${lines.pct}`);
         }
         return returnStrings;
     }
