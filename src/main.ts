@@ -106,7 +106,7 @@ async function main(): Promise<void> {
     const currentDirectory = await execSync('pwd')
       .toString()
       .trim()
-    let thresholdMessageToPost = `Code coverage for changed files in ${branchNameHead} \n`
+    let thresholdMessageToPost = `## Code coverage \n### Code coverage for changed files in ${branchNameHead} \n`
     const thresholdCoverageDetails = thresholdChecker.getCoverageDetails(
       `${currentDirectory}/`
     )
@@ -133,7 +133,7 @@ async function main(): Promise<void> {
 
     console.log('HAS PASSED: ', passed)
     if (thresholdCoverageDetails.length === 0) {
-      thresholdMessageToPost =
+      thresholdMessageToPost +=
         'No changes to code coverage between the base branch and the head branch'
     } else {
       thresholdMessageToPost +=
@@ -179,14 +179,14 @@ async function main(): Promise<void> {
       fullCodeCoverageSummaryOld
     )
 
-    let messageToPost = `Code coverage diff between base branch:${branchNameBase} and head branch: ${branchNameHead} \n`
+    let messageToPost = `## Coverage diff \n### Code coverage diff between base branch:${branchNameBase} and head branch: ${branchNameHead} \n`
     const fullCoverage = false
     const coverageDetails = diffChecker.getCoverageDetails(
       !fullCoverage,
       `${currentDirectory}/`
     )
     if (coverageDetails.length === 0) {
-      messageToPost =
+      messageToPost +=
         'No changes to code coverage between the base branch and the head branch'
     } else {
       messageToPost +=
