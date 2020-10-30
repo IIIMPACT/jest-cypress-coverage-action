@@ -20,9 +20,13 @@ async function main(): Promise<void> {
         required: true
       })
     )
+    console.log('prCoverageThreshold: ', prCoverageThreshold)
+    console.log('prCoverageThreshold type: ', typeof prCoverageThreshold)
     const fullCoverageDiff = core.getInput('fullCoverageDiff', {
       required: true
     })
+    console.log('fullCoverageDiff: ', fullCoverageDiff)
+    console.log('fullCoverageDiff type: ', typeof fullCoverageDiff)
     const githubClient = github.getOctokit(githubToken)
     const prNumber = github.context.issue.number
     const branchNameBase = github.context.payload.pull_request?.base.ref

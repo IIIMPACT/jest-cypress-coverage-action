@@ -5964,9 +5964,13 @@ function main() {
             const prCoverageThreshold = JSON.parse(core.getInput('prCoverageThreshold', {
                 required: true
             }));
+            console.log('prCoverageThreshold: ', prCoverageThreshold);
+            console.log('prCoverageThreshold type: ', typeof prCoverageThreshold);
             const fullCoverageDiff = core.getInput('fullCoverageDiff', {
                 required: true
             });
+            console.log('fullCoverageDiff: ', fullCoverageDiff);
+            console.log('fullCoverageDiff type: ', typeof fullCoverageDiff);
             const githubClient = github.getOctokit(githubToken);
             const prNumber = github.context.issue.number;
             const branchNameBase = (_a = github.context.payload.pull_request) === null || _a === void 0 ? void 0 : _a.base.ref;
