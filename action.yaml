@@ -2,33 +2,21 @@ name: "Jest-Cypress coverage"
 description: "run jest and cypress coverage"
 author: "Jabulani Mpofu"
 inputs:
-  who-to-greet: # id of input
-    description: "Who to greet"
-    required: true
-    default: "World"
   accessToken:
     description: 'access token required to comment on a pr'
     required: false
     default: ${{ github.token }}
-  fullCoverageReports:
-    description: 'JSON array of paths to full coverage reports'
+  prCoverageThreshold:
+    description: 'JSON object of pr coverage threshold'
     required: false
-    default: '[]'
-  summaryCoverageReports:
-    description: 'JSON array of paths to summary coverage reports'
-    required: false
-    default: '[]'
+    default: ''
   fullCoverageDiff:
     description: 'get the full coverage with diff or only the diff'
     required: false
-    default: 'false'
-  runCommand:
-    description: 'custom command to get json-summary'
-    default: 'npx jest --coverage --coverageReporters="json-summary" --coverageDirectory="./"'
-    required: false
+    default: false
 outputs:
-  time: # id of output
-    description: "The time we greeted you"
+  passed: # id of output
+    description: "Did the coverage pass or fail"
 runs:
   using: "node12"
   main: "dist/index.js"
