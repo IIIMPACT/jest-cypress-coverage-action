@@ -74,9 +74,11 @@ async function main(): Promise<void> {
       `npm run merge  -- --report ./jest-coverage-full/coverage-final.json`
     )
     console.log('Checkpoint: 2. first merge completed')
-
-    const fullCodeCoverageNew = await JSON.parse(
-      fs.readFileSync('coverage/coverage-final.json').toString()
+    // const fullCodeCoverageNew = await JSON.parse(
+    //   fs.readFileSync('coverage/coverage-final.json').toString()
+    // )
+    const fullCodeCoverageSummaryNew = await JSON.parse(
+      fs.readFileSync('coverage/coverage-summary.json').toString()
     )
 
     // Diff coverage
@@ -108,6 +110,28 @@ async function main(): Promise<void> {
     const thresholdCoverageDetails = thresholdChecker.getCoverageDetails(
       `${currentDirectory}/`
     )
+
+    //Check if passed
+    let passed = true
+    const {
+      total: {
+        branches: {pct: pctBranches},
+        lines: {pct: pctLines},
+        statements: {pct: pctStatements},
+        functions: {pct: pctFunctions}
+      }
+    } = prCodeCoverageSummaryNew
+    if (pctBranches < 70) {
+      passed = false
+    } else if (pctLines < 70) {
+      passed = false
+    } else if (pctStatements < 70) {
+      passed = false
+    } else if (pctFunctions < 70) {
+      passed = false
+    }
+
+    console.log('HAS PASSED: ', passed)
     if (thresholdCoverageDetails.length === 0) {
       thresholdMessageToPost =
         'No changes to code coverage between the base branch and the head branch'
@@ -141,15 +165,18 @@ async function main(): Promise<void> {
       `npm run merge  -- --report ./jest-coverage-full/coverage-final.json`
     )
     console.log('Checkpoint: 7. development merge completed')
-    const fullCodeCoverageOld = await JSON.parse(
-      fs.readFileSync('coverage/coverage-final.json').toString()
+    // const fullCodeCoverageOld = await JSON.parse(
+    //   fs.readFileSync('coverage/coverage-final.json').toString()
+    // )
+    const fullCodeCoverageSummaryOld = await JSON.parse(
+      fs.readFileSync('coverage/coverage-summary.json').toString()
     )
 
     // console.log('Checkpoint: 7b. fullCodeCoverageNew', fullCodeCoverageNew.)
     //    d. get coverage diff
     const diffChecker = new DiffChecker(
-      fullCodeCoverageNew,
-      fullCodeCoverageOld
+      fullCodeCoverageSummaryNew,
+      fullCodeCoverageSummaryOld
     )
 
     let messageToPost = `Code coverage diff between base branch:${branchNameBase} and head branch: ${branchNameHead} \n`

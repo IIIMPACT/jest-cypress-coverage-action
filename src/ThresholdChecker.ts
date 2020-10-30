@@ -1,4 +1,4 @@
-/* eslint-disable no-console */
+// /* eslint-disable no-console */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // import {CoverageReport} from './Model/CoverageReport'
 // import {DiffCoverageReport} from './Model/DiffCoverageReport'
@@ -14,15 +14,15 @@ export class ThresholdChecker {
     coverageReport: any /*CoverageReport*/,
     coverageThreshold: any /*CoverageReport*/
   ) {
-    console.log('coverageReport: ', coverageReport)
-    console.log('coverageThreshold: ', coverageThreshold)
+    // console.log('coverageReport: ', coverageReport)
+    // console.log('coverageThreshold: ', coverageThreshold)
     const reportKeys = Object.keys(coverageReport)
-    console.log('reportKeys: ', reportKeys)
+    // console.log('reportKeys: ', reportKeys)
     const coverageReportObj: {[key: string]: any} = {}
-    console.log('coverageReportObj: ', coverageReportObj)
+    // console.log('coverageReportObj: ', coverageReportObj)
     for (const key of reportKeys) {
-      console.log('key: ', key)
-      console.log('coverageReport[key]: ', coverageReport[key])
+      // console.log('key: ', key)
+      // console.log('coverageReport[key]: ', coverageReport[key])
       coverageReportObj[key] = {
         branches: this.getPassFail(
           coverageReport[key].branches,
@@ -44,7 +44,7 @@ export class ThresholdChecker {
     }
     this.coverageReport = Object.entries(coverageReportObj)
       .sort(([a], [b]) => {
-        if (a === 'all' || a < b) {
+        if (a === 'total' || a < b) {
           return -1
         }
         if (a > b) {
@@ -97,7 +97,7 @@ export class ThresholdChecker {
   }
 
   private getPercentage(coverageData: any /*CoverageData*/): number {
-    console.log('here coverageData: ', coverageData)
+    // console.log('here coverageData: ', coverageData)
     return coverageData.pct
   }
 }

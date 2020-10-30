@@ -5848,7 +5848,7 @@ exports.p = DiffChecker;
 "use strict";
 var __webpack_unused_export__;
 
-/* eslint-disable no-console */
+// /* eslint-disable no-console */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // import {CoverageReport} from './Model/CoverageReport'
 // import {DiffCoverageReport} from './Model/DiffCoverageReport'
@@ -5861,15 +5861,15 @@ class ThresholdChecker {
     constructor(coverageReport /*CoverageReport*/, coverageThreshold /*CoverageReport*/) {
         this.coverageReport = [];
         this.pass = true;
-        console.log('coverageReport: ', coverageReport);
-        console.log('coverageThreshold: ', coverageThreshold);
+        // console.log('coverageReport: ', coverageReport)
+        // console.log('coverageThreshold: ', coverageThreshold)
         const reportKeys = Object.keys(coverageReport);
-        console.log('reportKeys: ', reportKeys);
+        // console.log('reportKeys: ', reportKeys)
         const coverageReportObj = {};
-        console.log('coverageReportObj: ', coverageReportObj);
+        // console.log('coverageReportObj: ', coverageReportObj)
         for (const key of reportKeys) {
-            console.log('key: ', key);
-            console.log('coverageReport[key]: ', coverageReport[key]);
+            // console.log('key: ', key)
+            // console.log('coverageReport[key]: ', coverageReport[key])
             coverageReportObj[key] = {
                 branches: this.getPassFail(coverageReport[key].branches, coverageThreshold.branches),
                 statements: this.getPassFail(coverageReport[key].statements, coverageThreshold.statements),
@@ -5879,7 +5879,7 @@ class ThresholdChecker {
         }
         this.coverageReport = Object.entries(coverageReportObj)
             .sort(([a], [b]) => {
-            if (a === 'all' || a < b) {
+            if (a === 'total' || a < b) {
                 return -1;
             }
             if (a > b) {
@@ -5923,7 +5923,7 @@ class ThresholdChecker {
         return returnStrings;
     }
     getPercentage(coverageData /*CoverageData*/) {
-        console.log('here coverageData: ', coverageData);
+        // console.log('here coverageData: ', coverageData)
         return coverageData.pct;
     }
 }
@@ -6016,7 +6016,10 @@ function main() {
             //    b Merge coverages
             yield execSync(`npm run merge  -- --report ./jest-coverage-full/coverage-final.json`);
             console.log('Checkpoint: 2. first merge completed');
-            const fullCodeCoverageNew = yield JSON.parse(fs.readFileSync('coverage/coverage-final.json').toString());
+            // const fullCodeCoverageNew = await JSON.parse(
+            //   fs.readFileSync('coverage/coverage-final.json').toString()
+            // )
+            const fullCodeCoverageSummaryNew = yield JSON.parse(fs.readFileSync('coverage/coverage-summary.json').toString());
             // Diff coverage
             // 2. Get the full code coverage of changed files (jest and cypress merged)
             yield execSync(`git fetch origin ${branchNameBase}:${branchNameBase}`);
@@ -6036,6 +6039,22 @@ function main() {
                 .trim();
             let thresholdMessageToPost = `Code coverage for changed files in ${branchNameHead} \n`;
             const thresholdCoverageDetails = thresholdChecker.getCoverageDetails(`${currentDirectory}/`);
+            //Check if passed
+            let passed = true;
+            const { total: { branches: { pct: pctBranches }, lines: { pct: pctLines }, statements: { pct: pctStatements }, functions: { pct: pctFunctions } } } = prCodeCoverageSummaryNew;
+            if (pctBranches < 70) {
+                passed = false;
+            }
+            else if (pctLines < 70) {
+                passed = false;
+            }
+            else if (pctStatements < 70) {
+                passed = false;
+            }
+            else if (pctFunctions < 70) {
+                passed = false;
+            }
+            console.log('HAS PASSED: ', passed);
             if (thresholdCoverageDetails.length === 0) {
                 thresholdMessageToPost =
                     'No changes to code coverage between the base branch and the head branch';
@@ -6065,10 +6084,13 @@ function main() {
             //    c. merge jest/cypress
             yield execSync(`npm run merge  -- --report ./jest-coverage-full/coverage-final.json`);
             console.log('Checkpoint: 7. development merge completed');
-            const fullCodeCoverageOld = yield JSON.parse(fs.readFileSync('coverage/coverage-final.json').toString());
+            // const fullCodeCoverageOld = await JSON.parse(
+            //   fs.readFileSync('coverage/coverage-final.json').toString()
+            // )
+            const fullCodeCoverageSummaryOld = yield JSON.parse(fs.readFileSync('coverage/coverage-summary.json').toString());
             // console.log('Checkpoint: 7b. fullCodeCoverageNew', fullCodeCoverageNew.)
             //    d. get coverage diff
-            const diffChecker = new DiffChecker(fullCodeCoverageNew, fullCodeCoverageOld);
+            const diffChecker = new DiffChecker(fullCodeCoverageSummaryNew, fullCodeCoverageSummaryOld);
             let messageToPost = `Code coverage diff between base branch:${branchNameBase} and head branch: ${branchNameHead} \n`;
             const fullCoverage = true;
             const coverageDetails = diffChecker.getCoverageDetails(!fullCoverage, `${currentDirectory}/`);
