@@ -34,216 +34,98 @@ GitHub action to merge jest and cypress test coverages.
 ## Screenshots
 1. Example workflow
 
-   ![Example workflow](https://raw.githubusercontent.com/technote-space/get-diff-action/images/workflow.png)
-1. Skip
+   ![Example workflow](workflow.png)
+2. Coverage result
 
-   ![Skip](https://raw.githubusercontent.com/technote-space/get-diff-action/images/skip.png)
+   ![Coverage result](result1.png)
+3. Coverage diff
+
+   ![Coverage diff](result.png)
 
 ## Usage
 Basic Usage
 ```yaml
-on: pull_request
-name: CI
-jobs:
-  eslint:
-    name: ESLint
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: technote-space/get-diff-action@v3
-        with:
-          PATTERNS: |
-            +(src|__tests__)/**/*.ts
-            !src/exclude.ts
-          FILES: |
-            yarn.lock
-            .eslintrc
-      - name: Install Package dependencies
-        run: yarn install
-        if: env.GIT_DIFF
-      - name: Check code style
-        # Check only if there are differences in the source code
-        run: yarn lint
-        if: env.GIT_DIFF
-```
-
-[Details of the patterns that can be specified](https://github.com/isaacs/minimatch#minimatch)
-
-### Example of matching files
-- `src/main.ts`
-- `src/utils/abc.ts`
-- `__tests__/test.ts`
-- `yarn.lock`
-- `.eslintrc`
-- `anywhere/yarn.lock`
-
-### Examples of non-matching files
-- `main.ts`
-- `src/xyz.txt`
-- `src/exclude.ts`
-
-### Examples of env
-| name | value |
-|:---|:---|
-| `GIT_DIFF` |`'src/main.ts' 'src/utils/abc.ts' '__tests__/test.ts' 'yarn.lock' '.eslintrc' 'anywhere/yarn.lock'` |
-| `GIT_DIFF_FILTERED` | `'src/main.ts' 'src/utils/abc.ts' '__tests__/test.ts'` |
-| `MATCHED_FILES` | `'yarn.lock' '.eslintrc' 'anywhere/yarn.lock'` |
-
-Specify a little more detail
-```yaml
-on: pull_request
-name: CI
-jobs:
-  eslint:
-    name: ESLint
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: technote-space/get-diff-action@v4
-        with:
-          PATTERNS: |
-            +(src|__tests__)/**/*.ts
-          FILES: |
-            yarn.lock
-            .eslintrc
-      - name: Install Package dependencies
-        run: yarn install
-        if: env.GIT_DIFF
-      - name: Check code style
-        # Check only source files with differences
-        run: yarn eslint ${{ env.GIT_DIFF_FILTERED }}  # e.g. yarn eslint 'src/main.ts' '__tests__/test.ts'
-        if: env.GIT_DIFF && !env.MATCHED_FILES
-      - name: Check code style
-        # Check only if there are differences in the source code (Run a lint on all files if there are changes to yarn.lock or .eslintrc)
-        run: yarn lint
-        if: env.GIT_DIFF && env.MATCHED_FILES
-```
-
-If there is no difference in the source code below, this workflow will skip the code style check
-- `src/**/*.ts`
-- `__tests__/**/*.ts`
-
-## Behavior
-1. Get git diff
-
-   ```shell script
-   git diff ${FROM}${DOT}${TO} '--diff-filter=${DIFF_FILTER}' --name-only
-   ```
-
-   e.g. (default)
-   ```yaml
-   DOT: '...'
-   DIFF_FILTER: 'AMRC'
-   ```
-   =>
-   ```shell script
-   git diff ${FROM}...${TO} '--diff-filter=AMRC' --name-only
-   ```
-   =>
-   ```
-   .github/workflows/ci.yml
-   __tests__/utils/command.test.ts
-   package.json
-   src/main.ts
-   src/utils/command.ts
-   src/docs.md
-   yarn.lock
-   ```
-
-   [${FROM}, ${TO}](#from-to)
-
-1. Filtered by `PATTERNS` option
-
-   e.g.
-   ```yaml
-   PATTERNS: |
-     src/**/*.+(ts|md)
-     !src/utils/*
-   ```
-   =>
-   ```
-   src/main.ts
-   src/docs.md
-   ```
-
-1. Filtered by `FILES` option
-
-   e.g.
-   ```yaml
-   FILES: package.json
-   ```
-   =>
-   ```
-   package.json
-   anywhere/package.json
-   ```
-
-1. Mapped to absolute if `ABSOLUTE` option is true (default: false)
-
-   e.g.
-   ```
-   /home/runner/work/my-repo-name/my-repo-name/src/main.ts
-   /home/runner/work/my-repo-name/my-repo-name/src/docs.md
-   ```
-
-1. Combined by `SEPARATOR` option
-
-   e.g. (default)
-   ```yaml
-   SEPARATOR: ' '
-   ```
-   =>
-   ```
-   /home/runner/work/my-repo-name/my-repo-name/src/main.ts /home/runner/work/my-repo-name/my-repo-name/src/docs.md
-   ```
-
-## Outputs
-| name | description | e.g. |
-|:---|:---|:---|
-| diff | The results of diff file names.<br>If inputs `SET_ENV_NAME`(default: `GIT_DIFF`) is set, an environment variable is set with that name. | `src/main.ts src/docs.md` |
-| count | The number of diff files.<br>If inputs `SET_ENV_NAME_COUNT`(default: `''`) is set, an environment variable is set with that name. | `100` |
-| insertions | The number of insertions lines.<br>If inputs `SET_ENV_NAME_INSERTIONS`(default: `''`) is set, an environment variable is set with that name. | `100` |
-| deletions | The number of deletions lines.<br>If inputs `SET_ENV_NAME_DELETIONS`(default: `''`) is set, an environment variable is set with that name. | `100` |
-| lines | The number of diff lines.<br>If inputs `SET_ENV_NAME_LINES`(default: `''`) is set, an environment variable is set with that name. | `200` |
-
-## Action event details
-### Target events
-| eventName | action |
-|:---|:---|
-| pull_request | opened, reopened, synchronize, closed, ready_for_review |
-| push | * |
-
-If called on any other event, the result will be empty.
-
-## Addition
-### FROM, TO
-| condition | FROM | TO |
-|:---|:---|:---|
-| tag push | --- | --- |
-| pull request | pull.base.ref (e.g. master) | context.ref (e.g. refs/pull/123/merge) |
-| push (has related pull request) | pull.base.ref (e.g. master) | `refs/pull/${pull.number}/merge` (e.g. refs/pull/123/merge) |
-| context.payload.before = '000...000' | default branch (e.g. master) | context.payload.after |
-| else | context.payload.before | context.payload.after |
-
-### Check only the latest commit differences in a draft Pull Request
-```yaml
 on:
   pull_request:
-    types: [opened, reopened, synchronize, closed, ready_for_review]
+  push:
+    branches:
+      - master
+      - development
 
 jobs:
-  eslint:
-    name: ESLint
-    runs-on: ubuntu-latest
+  coverage:
+    name: coverage
+    strategy:
+      matrix:
+        node-version: [14.x]
+        platform: [ubuntu-latest]
+    runs-on: ${{ matrix.platform }}
     steps:
-      - uses: actions/checkout@v2
-      - uses: technote-space/get-diff-action@v4
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
         with:
-          CHECK_ONLY_COMMIT_WHEN_DRAFT: true
-      # ...
+          node-version: ${{ matrix.node-version }}
+
+      - name: Cache node modules
+        uses: actions/cache@v1
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-${{ env.cache-name }}
+            ${{ runner.os }}-node-
+            ${{ runner.os }}-
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Run Tests and display coverage
+        id: coverage
+        uses: IIIMPACT/jest-cypress-coverage-action@main
+        with:
+          accessToken: ${{secrets.GITHUB_TOKEN}}
+          fullCoverageDiff: false
+          prCoverageThreshold: '{"global":{"branches":45,"functions":50,"lines":50,"statements":70}}'
+          checkForDuplicateMessages: false
 ```
 
-## Author
-[GitHub (Technote)](https://github.com/technote-space)
+## Behavior
+1. Run tests and get combined pr test coverage
 
-[Blog](https://technote.space)
+   ```run shell scripts
+   npm run test:all
+   npm run test:cypress:staging
+   ```
+   =>
+   e.g. (default output)
+   ```file system
+   .nyc_output/out.json
+   jest-coverage-full/coverage-final.json
+   ```
+   =>
+   Merge coverage reports
+   `merge` will first Normalise jest coverage reports, removing an enclosing `data` property on `*.d.ts` and `*.js` files and then merging the coverages
+   ```run shell script to merge coverages
+   npm run merge  -- --report ./jest-coverage-full/coverage-final.json --report ./.nyc_output/out.json
+   ```
+   
+3. Test pr coverage against thresholds
+   Get list of files that have changed in the pr
+   ```fetch the base branch and the head branch and get an array of their diff
+   git fetch origin ${branchNameBase}:${branchNameBase}
+   git fetch origin ${branchNameHead}:${branchNameHead}
+   ```
+   =>
+   Merge coverage reports
+   `merge` will first Normalise jest coverage reports, removing an enclosing `data` property on `*.d.ts` and `*.js` files and then merging the coverages
+   ```run shell script to merge coverages
+   npm run merge  -- --report ./jest-coverage-full/coverage-final.json --report ./.nyc_output/out.json
+   ```
+   =>
+   Test coverage report summary against the set thresholds
+
+## Author
+[GitHub (Jabulani Mpofu)](https://github.com/jabulani404)
