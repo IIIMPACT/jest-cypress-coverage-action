@@ -28,14 +28,30 @@ async function main(): Promise<void> {
     const branchNameBase = github.context.payload.pull_request?.base.ref
     const branchNameHead = github.context.payload.pull_request?.head.ref
 
+    let cypressError = null
+    let cypressReport = ''
+
     // 1. Get the full code coverage of new branch (jest and cypress merged)
     //    a. Execute tests
     await execSync('npm run test:all') // should include cypress here or add it as separate
-    await execSync('npm run test:cypress:staging') // should include cypress here or add it as separate
+    try {
+      await execSync('npm run test:cypress:staging') // should include cypress here or add it as separate
+    } catch (e) {
+      console.log('Cypress failed', e)
+      cypressError = e
+    }
+
+    try {
+      if (fs.existsSync('./.nyc_output/out.json')) {
+        cypressReport = '--report ./.nyc_output/out.json'
+      }
+    } catch (err) {
+      console.log('Cypress report unavailable', err)
+    }
 
     //    b Merge coverages
     await execSync(
-      `npm run merge  -- --report ./jest-coverage-full/coverage-final.json --report ./.nyc_output/out.json`
+      `npm run merge  -- --report ./jest-coverage-full/coverage-final.json ${cypressReport}`
     )
     const fullCodeCoverageSummaryNew = await JSON.parse(
       fs.readFileSync('coverage/coverage-summary.json').toString()
@@ -99,6 +115,13 @@ async function main(): Promise<void> {
       thresholdMessageToPost += `- Branches coverage of ${pctFunctions} does not meet required coverage of ${prCoverageThreshold.global.functions}`
       passed = false
     }
+    if (cypressError) {
+      thresholdMessageToPost += '#### Cypress did not run!!!\n'
+    }
+    if (!cypressReport) {
+      thresholdMessageToPost +=
+        '#### No cypress report was found so no cypress coverage was included in this report!!!\n'
+    }
 
     await githubClient.issues.createComment({
       repo: repoName,
@@ -113,6 +136,8 @@ async function main(): Promise<void> {
 
     // Failing diff should not fail the PR
     try {
+      cypressError = null
+      cypressReport = ''
       // Get development branch coverage
       //    a. checkout dev branch 2. get coverage diff and display
       await execSync('git fetch')
@@ -121,11 +146,24 @@ async function main(): Promise<void> {
 
       //    b. run tests
       await execSync('npm run test:all')
-      await execSync('npm run test:cypress:staging') // should include cypress here or add it as separate
+      try {
+        await execSync('npm run test:cypress:staging') // should include cypress here or add it as separate
+      } catch (e) {
+        console.log('Cypress failed', e)
+        cypressError = e
+      }
+
+      try {
+        if (fs.existsSync('./.nyc_output/out.json')) {
+          cypressReport = '--report ./.nyc_output/out.json'
+        }
+      } catch (err) {
+        console.log('Cypress report unavailable', err)
+      }
 
       //    c. merge jest/cypress
       await execSync(
-        `npm run merge  -- --report ./jest-coverage-full/coverage-final.json --report ./.nyc_output/out.json`
+        `npm run merge  -- --report ./jest-coverage-full/coverage-final.json ${cypressReport}`
       )
       const fullCodeCoverageSummaryOld = await JSON.parse(
         fs.readFileSync('coverage/coverage-summary.json').toString()
@@ -149,6 +187,13 @@ async function main(): Promise<void> {
         messageToPost +=
           'File | % Stmts | % Branch | % Funcs | % Lines \n -----|---------|----------|---------|------ \n'
         messageToPost += coverageDetails.join('\n')
+      }
+      if (cypressError) {
+        messageToPost += '#### Cypress did not run!!!\n'
+      }
+      if (!cypressReport) {
+        messageToPost +=
+          '#### No cypress report was found so no cypress coverage was included in this report!!!\n'
       }
       await githubClient.issues.createComment({
         repo: repoName,

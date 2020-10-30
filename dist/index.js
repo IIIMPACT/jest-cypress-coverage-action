@@ -5951,12 +5951,28 @@ function main() {
             const prNumber = github.context.issue.number;
             const branchNameBase = (_a = github.context.payload.pull_request) === null || _a === void 0 ? void 0 : _a.base.ref;
             const branchNameHead = (_b = github.context.payload.pull_request) === null || _b === void 0 ? void 0 : _b.head.ref;
+            let cypressError = null;
+            let cypressReport = '';
             // 1. Get the full code coverage of new branch (jest and cypress merged)
             //    a. Execute tests
             yield execSync('npm run test:all'); // should include cypress here or add it as separate
-            yield execSync('npm run test:cypress:staging'); // should include cypress here or add it as separate
+            try {
+                yield execSync('npm run test:cypress:staging'); // should include cypress here or add it as separate
+            }
+            catch (e) {
+                console.log('Cypress failed', e);
+                cypressError = e;
+            }
+            try {
+                if (fs.existsSync('./.nyc_output/out.json')) {
+                    cypressReport = '--report ./.nyc_output/out.json';
+                }
+            }
+            catch (err) {
+                console.log('Cypress report unavailable', err);
+            }
             //    b Merge coverages
-            yield execSync(`npm run merge  -- --report ./jest-coverage-full/coverage-final.json --report ./.nyc_output/out.json`);
+            yield execSync(`npm run merge  -- --report ./jest-coverage-full/coverage-final.json ${cypressReport}`);
             const fullCodeCoverageSummaryNew = yield JSON.parse(fs.readFileSync('coverage/coverage-summary.json').toString());
             // Diff coverage
             // 2. Get the full code coverage of changed files (jest and cypress merged)
@@ -6000,6 +6016,13 @@ function main() {
                 thresholdMessageToPost += `- Branches coverage of ${pctFunctions} does not meet required coverage of ${prCoverageThreshold.global.functions}`;
                 passed = false;
             }
+            if (cypressError) {
+                thresholdMessageToPost += '#### Cypress did not run!!!\n';
+            }
+            if (!cypressReport) {
+                thresholdMessageToPost +=
+                    '#### No cypress report was found so no cypress coverage was included in this report!!!\n';
+            }
             yield githubClient.issues.createComment({
                 repo: repoName,
                 owner: repoOwner,
@@ -6011,6 +6034,8 @@ function main() {
             }
             // Failing diff should not fail the PR
             try {
+                cypressError = null;
+                cypressReport = '';
                 // Get development branch coverage
                 //    a. checkout dev branch 2. get coverage diff and display
                 yield execSync('git fetch');
@@ -6018,9 +6043,23 @@ function main() {
                 yield execSync(`git checkout --progress --force ${branchNameBase}`);
                 //    b. run tests
                 yield execSync('npm run test:all');
-                yield execSync('npm run test:cypress:staging'); // should include cypress here or add it as separate
+                try {
+                    yield execSync('npm run test:cypress:staging'); // should include cypress here or add it as separate
+                }
+                catch (e) {
+                    console.log('Cypress failed', e);
+                    cypressError = e;
+                }
+                try {
+                    if (fs.existsSync('./.nyc_output/out.json')) {
+                        cypressReport = '--report ./.nyc_output/out.json';
+                    }
+                }
+                catch (err) {
+                    console.log('Cypress report unavailable', err);
+                }
                 //    c. merge jest/cypress
-                yield execSync(`npm run merge  -- --report ./jest-coverage-full/coverage-final.json --report ./.nyc_output/out.json`);
+                yield execSync(`npm run merge  -- --report ./jest-coverage-full/coverage-final.json ${cypressReport}`);
                 const fullCodeCoverageSummaryOld = yield JSON.parse(fs.readFileSync('coverage/coverage-summary.json').toString());
                 //    d. get coverage diff
                 const diffChecker = new DiffChecker(fullCodeCoverageSummaryNew, fullCodeCoverageSummaryOld);
@@ -6034,6 +6073,13 @@ function main() {
                     messageToPost +=
                         'File | % Stmts | % Branch | % Funcs | % Lines \n -----|---------|----------|---------|------ \n';
                     messageToPost += coverageDetails.join('\n');
+                }
+                if (cypressError) {
+                    messageToPost += '#### Cypress did not run!!!\n';
+                }
+                if (!cypressReport) {
+                    messageToPost +=
+                        '#### No cypress report was found so no cypress coverage was included in this report!!!\n';
                 }
                 yield githubClient.issues.createComment({
                     repo: repoName,
