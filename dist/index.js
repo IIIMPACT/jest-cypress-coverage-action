@@ -6008,6 +6008,7 @@ function main() {
             //Check if passed
             let passed = true;
             const { total: { branches: { pct: pctBranches }, lines: { pct: pctLines }, statements: { pct: pctStatements }, functions: { pct: pctFunctions } } } = prCodeCoverageSummaryNew;
+            console.log('prCodeCoverageSummaryNew!!!!!!!!!!!', prCodeCoverageSummaryNew);
             if (pctBranches < prCoverageThreshold.global.branches) {
                 passed = false;
                 console.log(`

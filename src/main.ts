@@ -109,6 +109,7 @@ async function main(): Promise<void> {
         functions: {pct: pctFunctions}
       }
     } = prCodeCoverageSummaryNew
+    console.log('prCodeCoverageSummaryNew!!!!!!!!!!!', prCodeCoverageSummaryNew)
     if (pctBranches < prCoverageThreshold.global.branches) {
       passed = false
       console.log(`
