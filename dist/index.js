@@ -5957,7 +5957,7 @@ function main() {
             //    a. Execute tests
             yield execSync('npm run test:all'); // should include cypress here or add it as separate
             try {
-                yield execSync('npm run test:cypress:stagingdsfdsff'); // should include cypress here or add it as separate
+                yield execSync('npm run test:cypress:staging'); // should include cypress here or add it as separate
             }
             catch (e) {
                 console.log('Cypress failed', e);
