@@ -57,7 +57,7 @@ async function main(): Promise<void> {
 
     //    b Merge coverages
     await execSync(
-      `npm run merge  -- --report ./jest-coverage-full/coverage-final.json ${cypressReport}`
+      `npm run merge  -- --report ./coverage-jest/coverage-final.json ${cypressReport}`
     )
     const fullCodeCoverageSummaryNew = await JSON.parse(
       fs.readFileSync('coverage/coverage-summary.json').toString()

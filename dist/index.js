@@ -5979,7 +5979,7 @@ function main() {
                 console.log('FILE: We have no file1!!!');
             }
             //    b Merge coverages
-            yield execSync(`npm run merge  -- --report ./jest-coverage-full/coverage-final.json ${cypressReport}`);
+            yield execSync(`npm run merge  -- --report ./coverage-jest/coverage-final.json ${cypressReport}`);
             const fullCodeCoverageSummaryNew = yield JSON.parse(fs.readFileSync('coverage/coverage-summary.json').toString());
             // Diff coverage
             // 2. Get the full code coverage of changed files (jest and cypress merged)
