@@ -68,7 +68,7 @@ async function main(): Promise<void> {
     await execSync(`git fetch origin ${branchNameBase}:${branchNameBase}`)
     await execSync(`git fetch origin ${branchNameHead}:${branchNameHead}`)
     await execSync(
-      `npm run merge  -- --report ./jest-coverage-full/coverage-final.json  ${cypressReport} --changedSince=${branchNameBase}`
+      `npm run merge  -- --report ./coverage-jest/coverage-final.json  ${cypressReport} --changedSince=${branchNameBase}`
     )
 
     const prCodeCoverageSummaryNew = await JSON.parse(
@@ -195,7 +195,7 @@ async function main(): Promise<void> {
 
       //    c. merge jest/cypress
       await execSync(
-        `npm run merge  -- --report ./jest-coverage-full/coverage-final.json ${cypressReport}`
+        `npm run merge  -- --report ./coverage-jest/coverage-final.json ${cypressReport}`
       )
       const fullCodeCoverageSummaryOld = await JSON.parse(
         fs.readFileSync('coverage/coverage-summary.json').toString()
