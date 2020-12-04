@@ -173,7 +173,7 @@ async function main(): Promise<void> {
       //    b. run tests
       await execSync('npm run test:all')
       try {
-        await execSync('npm run test:cypress:staginghjhk') // should include cypress here or add it as separate
+        await execSync('npm run test:cypress:staging') // should include cypress here or add it as separate
       } catch (e) {
         console.log('Cypress failed', e)
         cypressError = e
