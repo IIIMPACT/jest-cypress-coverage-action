@@ -37,22 +37,22 @@ async function main(): Promise<void> {
     try {
       await execSync('npm run test:cypress:staging') // should include cypress here or add it as separate
     } catch (e) {
-      console.log('Cypress failed', e)
+      console.log('v1:Cypress failed', e)
       cypressError = e
     }
 
     try {
       if (fs.existsSync('./.nyc_output/out.json')) {
         cypressReport = '--report ./.nyc_output/out.json'
-        console.log('FILE: We have the file1!!!')
+        console.log('v1:FILE: We have the file1!!!')
       } else {
         cypressReport = ''
-        console.log('FILE: We have no file else1!!!')
+        console.log('v1:FILE: We have no file else1!!!')
       }
     } catch (err) {
-      console.log('Cypress report unavailable', err)
+      console.log('v1:Cypress report unavailable', err)
       cypressReport = ''
-      console.log('FILE: We have no file1!!!')
+      console.log('v1:FILE: We have no file1!!!')
     }
 
     //    b Merge coverages
@@ -109,10 +109,13 @@ async function main(): Promise<void> {
         functions: {pct: pctFunctions}
       }
     } = prCodeCoverageSummaryNew
-    console.log('prCodeCoverageSummaryNew!!!!!!!!!!!', prCodeCoverageSummaryNew)
+    console.log(
+      'v1:prCodeCoverageSummaryNew!!!!!!!!!!!',
+      prCodeCoverageSummaryNew
+    )
     if (pctBranches < prCoverageThreshold.global.branches) {
       passed = false
-      console.log(`
+      console.log(`v1:
         Branches: ${pctBranches}:${
         prCoverageThreshold.global.branches
       } (${pctBranches <
@@ -120,20 +123,20 @@ async function main(): Promise<void> {
       thresholdMessageToPost += `- Branches coverage of ${pctBranches} does not meet required coverage of ${prCoverageThreshold.global.branches}`
     } else if (pctLines < prCoverageThreshold.global.lines) {
       passed = false
-      console.log(`
+      console.log(`v1:
         Lines: ${pctLines}:${prCoverageThreshold.global.lines} (${pctLines <
         prCoverageThreshold.global.lines}) passed:${passed}`)
       thresholdMessageToPost += `- Lines coverage of ${pctLines} does not meet required coverage of ${prCoverageThreshold.global.lines}`
     } else if (pctStatements < prCoverageThreshold.global.statements) {
       passed = false
-      console.log(`
+      console.log(`v1:
         Statements: ${pctStatements}:${
         prCoverageThreshold.global.statements
       } (${pctStatements <
         prCoverageThreshold.global.statements}) passed:${passed}`)
       thresholdMessageToPost += `- Statements coverage of ${pctStatements} does not meet required coverage of ${prCoverageThreshold.global.statements}`
     } else if (pctFunctions < prCoverageThreshold.global.functions) {
-      console.log(`
+      console.log(`v1:
         Functions: ${pctFunctions}:${
         prCoverageThreshold.global.functions
       } (${pctFunctions <
@@ -175,22 +178,22 @@ async function main(): Promise<void> {
       try {
         await execSync('npm run test:cypress:staging') // should include cypress here or add it as separate
       } catch (e) {
-        console.log('Cypress failed', e)
+        console.log('v1:Cypress failed', e)
         cypressError = e
       }
 
       try {
         if (fs.existsSync('./.nyc_output/out.json')) {
           cypressReport = '--report ./.nyc_output/out.json'
-          console.log('FILE: We have the file2!!!')
+          console.log('v1:FILE: We have the file2!!!')
         } else {
           cypressReport = ''
-          console.log('FILE: We have no file else2!!!')
+          console.log('v1:FILE: We have no file else2!!!')
         }
       } catch (err) {
-        console.log('Cypress report unavailable2', err)
+        console.log('v1:Cypress report unavailable2', err)
         cypressReport = ''
-        console.log('FILE: We have no file2!!!')
+        console.log('v1:FILE: We have no file2!!!')
       }
 
       //    c. merge jest/cypress
@@ -235,7 +238,7 @@ async function main(): Promise<void> {
         issue_number: prNumber
       })
     } catch (error) {
-      console.log('Error with diff', error)
+      console.log('v1:Error with diff', error)
     }
   } catch (error) {
     core.setFailed(error.message)
