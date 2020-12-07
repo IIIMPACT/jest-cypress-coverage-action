@@ -47,9 +47,7 @@ async function main(): Promise<void> {
         console.log('v2:FILE: We have the file1!!!')
         console.log(
           'v2:cypress coverage>>>',
-          await JSON.parse(
-            fs.readFileSync('coverage/coverage-summary.json').toString()
-          )
+          await JSON.parse(fs.readFileSync('./.nyc_output/out.json').toString())
         )
       } else {
         cypressReport = ''
