@@ -45,10 +45,10 @@ async function main(): Promise<void> {
       if (fs.existsSync('./.nyc_output/out.json')) {
         cypressReport = '--report ./.nyc_output/out.json'
         console.log('v2:FILE: We have the file1!!!')
-        console.log(
+        /*console.log(
           'v2:cypress coverage>>>',
           await JSON.parse(fs.readFileSync('./.nyc_output/out.json').toString())
-        )
+        )*/
       } else {
         cypressReport = ''
         console.log('v2:FILE: We have no file else1!!!')
