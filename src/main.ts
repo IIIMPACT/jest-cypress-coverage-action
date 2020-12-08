@@ -43,7 +43,7 @@ async function main(): Promise<void> {
 
     try {
       if (fs.existsSync('./.nyc_output/out.json')) {
-        // cypressReport = '--report ./.nyc_output/out.json'
+        cypressReport = '--report ./.nyc_output/out.json'
         console.log('v2:FILE: We have the file1!!!')
         console.log(
           'v2:cypress coverage>>>',
@@ -149,7 +149,10 @@ async function main(): Promise<void> {
       passed = false
     }
     if (cypressError) {
-      thresholdMessageToPost += `#### Cypress exited with an error: ${cypressError.message}!!!\n`
+      thresholdMessageToPost += `#### Cypress exited with an error: ${cypressError.message.slice(
+        0,
+        160
+      )}!!!\n`
     }
     if (!cypressReport) {
       thresholdMessageToPost +=
@@ -231,7 +234,10 @@ async function main(): Promise<void> {
         messageToPost += '\n'
       }
       if (cypressError) {
-        thresholdMessageToPost += `#### Cypress exited with an error: ${cypressError.message}!!!\n`
+        thresholdMessageToPost += `#### Cypress exited with an error: ${cypressError.message.slice(
+          0,
+          160
+        )}!!!\n`
       }
       if (!cypressReport) {
         messageToPost +=

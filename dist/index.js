@@ -5965,7 +5965,7 @@ function main() {
             }
             try {
                 if (fs.existsSync('./.nyc_output/out.json')) {
-                    // cypressReport = '--report ./.nyc_output/out.json'
+                    cypressReport = '--report ./.nyc_output/out.json';
                     console.log('v2:FILE: We have the file1!!!');
                     console.log('v2:cypress coverage>>>', yield JSON.parse(fs.readFileSync('./.nyc_output/out.json').toString()));
                 }
@@ -6039,7 +6039,7 @@ function main() {
                 passed = false;
             }
             if (cypressError) {
-                thresholdMessageToPost += `#### Cypress exited with an error: ${cypressError.message}!!!\n`;
+                thresholdMessageToPost += `#### Cypress exited with an error: ${cypressError.message.slice(0, 160)}!!!\n`;
             }
             if (!cypressReport) {
                 thresholdMessageToPost +=
@@ -6108,7 +6108,7 @@ function main() {
                     messageToPost += '\n';
                 }
                 if (cypressError) {
-                    thresholdMessageToPost += `#### Cypress exited with an error: ${cypressError.message}!!!\n`;
+                    thresholdMessageToPost += `#### Cypress exited with an error: ${cypressError.message.slice(0, 160)}!!!\n`;
                 }
                 if (!cypressReport) {
                     messageToPost +=
