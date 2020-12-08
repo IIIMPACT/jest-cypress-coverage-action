@@ -5956,30 +5956,29 @@ function main() {
             // 1. Get the full code coverage of new branch (jest and cypress merged)
             //    a. Execute tests
             yield execSync('npm run test:all'); // should include cypress here or add it as separate
-            /*try {
-              await execSync('npm run test:cypress:staging') // should include cypress here or add it as separate
-            } catch (e) {
-              console.log('v2:Cypress failed', e)
-              cypressError = e
-            }
-        
             try {
-              if (fs.existsSync('./.nyc_output/out.json')) {
-                cypressReport = '--report ./.nyc_output/out.json'
-                console.log('v2:FILE: We have the file1!!!')
-                /*console.log(
-                  'v2:cypress coverage>>>',
-                  await JSON.parse(fs.readFileSync('./.nyc_output/out.json').toString())
-                )*
-              } else {
-                cypressReport = ''
-                console.log('v2:FILE: We have no file else1!!!')
-              }
-            } catch (err) {
-              console.log('v2:Cypress report unavailable', err)
-              cypressReport = ''
-              console.log('v2:FILE: We have no file1!!!')
-            }*/
+                yield execSync('npm run test:cypress:staging'); // should include cypress here or add it as separate
+            }
+            catch (e) {
+                console.log('v2:Cypress failed', e);
+                cypressError = e;
+            }
+            try {
+                if (fs.existsSync('./.nyc_output/out.json')) {
+                    // cypressReport = '--report ./.nyc_output/out.json'
+                    console.log('v2:FILE: We have the file1!!!');
+                    console.log('v2:cypress coverage>>>', yield JSON.parse(fs.readFileSync('./.nyc_output/out.json').toString()));
+                }
+                else {
+                    cypressReport = '';
+                    console.log('v2:FILE: We have no file else1!!!');
+                }
+            }
+            catch (err) {
+                console.log('v2:Cypress report unavailable', err);
+                cypressReport = '';
+                console.log('v2:FILE: We have no file1!!!');
+            }
             //    b Merge coverages
             yield execSync(`npm run merge  -- --report ./coverage-jest/coverage-final.json ${cypressReport}`);
             const fullCodeCoverageSummaryNew = yield JSON.parse(fs.readFileSync('coverage/coverage-summary.json').toString());
@@ -6039,12 +6038,15 @@ function main() {
                 thresholdMessageToPost += `- Functions coverage of ${pctFunctions} does not meet required coverage of ${prCoverageThreshold.global.functions}`;
                 passed = false;
             }
-            /*if (cypressError) {
-              thresholdMessageToPost += `#### Cypress exited with an error: ${cypressError.message}!!!\n`
-            }*/
+            if (cypressError) {
+                thresholdMessageToPost += `#### Cypress exited with an error: ${cypressError.message}!!!\n`;
+            }
             if (!cypressReport) {
                 thresholdMessageToPost +=
                     '#### No cypress report was found so no cypress coverage was included in this report!!!\n';
+            }
+            else {
+                thresholdMessageToPost += `#### Cypress coverage was included in this report!!!\n`;
             }
             yield githubClient.issues.createComment({
                 repo: repoName,
@@ -6111,6 +6113,9 @@ function main() {
                 if (!cypressReport) {
                     messageToPost +=
                         '#### No cypress report was found so no cypress coverage was included in this report!!!\n';
+                }
+                else {
+                    messageToPost += `#### Cypress coverage was included in this report!!!\n`;
                 }
                 yield githubClient.issues.createComment({
                     repo: repoName,
