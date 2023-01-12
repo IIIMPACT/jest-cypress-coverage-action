@@ -28,13 +28,13 @@ async function main(): Promise<void> {
     const branchNameBase = github.context.payload.pull_request?.base.ref
     const branchNameHead = github.context.payload.pull_request?.head.ref
 
-    console.log('prNumber', prNumber)
+    console.log('github.context', github.context)
 
-    const {data: pullRequest} = await githubClient.rest.pulls.get({
-      pull_number: prNumber
-    })
+    // const {data: pullRequest} = await githubClient.rest.pulls.get({
+    //   pull_number: prNumber
+    // })
 
-    console.log('pullRequest', pullRequest)
+    // console.log('pullRequest', pullRequest)
 
     let cypressError = null
     let cypressReport = ''
