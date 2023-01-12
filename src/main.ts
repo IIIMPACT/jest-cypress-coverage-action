@@ -24,15 +24,11 @@ async function main(): Promise<void> {
         required: true
       }) === 'true'
     const githubClient = github.getOctokit(githubToken)
-    const prNumber = github.context.issue.number
+    // const prNumber = github.context.issue.number
+    const prNumber = core.getInput('prNumber', {required: true})
     const branchNameBase = github.context.payload.pull_request?.base.ref
     const branchNameHead = github.context.payload.pull_request?.head.ref
 
-    // .event.pull_request.number
-    console.log(
-      'github.event.pull_request.number',
-      github.event.pull_request.number
-    )
     console.log('prNumber', prNumber)
 
     // const {data: pullRequest} = await githubClient.request(
