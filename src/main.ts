@@ -30,14 +30,6 @@ async function main(): Promise<void> {
 
     console.log('github.context', github.context)
 
-    const {data: pullRequest} = await githubClient.rest.pulls.get({
-      owner: repoOwner,
-      repo: repoName,
-      pull_number: 298
-    })
-
-    console.log('pullRequest', pullRequest)
-
     let cypressError = null
     let cypressReport = ''
 
