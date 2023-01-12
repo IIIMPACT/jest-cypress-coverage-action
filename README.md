@@ -82,6 +82,7 @@ jobs:
           fullCoverageDiff: false
           prCoverageThreshold: '{"global":{"branches":45,"functions":50,"lines":50,"statements":70}}'
           checkForDuplicateMessages: false
+          prNumber: ${{ github.event.pull_request.number }}
 ```
 
 ## Behavior
