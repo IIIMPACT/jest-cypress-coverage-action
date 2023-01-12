@@ -29,6 +29,20 @@ async function main(): Promise<void> {
     const branchNameHead = github.context.payload.pull_request?.head.ref
 
     console.log('github.context', github.context)
+    console.log('repoName', repoName)
+    console.log('repoOwner', repoOwner)
+    console.log('prNumber', prNumber)
+
+    // const {data: pullRequest} = await githubClient.request(
+    //   `GET /repos/${repoOwner}/${repoName}/pulls/{pull_number}`,
+    //   {
+    //     owner: 'OWNER',
+    //     repo: 'REPO',
+    //     pull_number: 'PULL_NUMBER'
+    //   }
+    // )
+
+    // console.log('pullRequest', pullRequest)
 
     let cypressError = null
     let cypressReport = ''
