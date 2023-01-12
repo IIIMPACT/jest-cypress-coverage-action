@@ -28,9 +28,10 @@ async function main(): Promise<void> {
     const branchNameBase = github.context.payload.pull_request?.base.ref
     const branchNameHead = github.context.payload.pull_request?.head.ref
 
+    // .event.pull_request.number
     console.log(
-      'github.context.payload.pulls_url',
-      github.context.payload.pulls_url
+      'github.event.pull_request.number',
+      github.event.pull_request.number
     )
     console.log('prNumber', prNumber)
 
