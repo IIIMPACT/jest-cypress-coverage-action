@@ -30,7 +30,9 @@ async function main(): Promise<void> {
 
     console.log('github.context', github.context)
 
-    const {data: pullRequest} = await githubClient.rest.pulls.get()
+    const {data: pullRequest} = await githubClient.rest.pulls.get({
+      repo: repoName
+    })
 
     console.log('pullRequest', pullRequest)
 
