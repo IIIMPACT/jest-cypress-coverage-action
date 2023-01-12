@@ -5948,6 +5948,7 @@ function main() {
                 required: true
             }) === 'true';
             const githubClient = github.getOctokit(githubToken);
+            console.log('prNumber', prNumber);
             const { data: pullRequest } = yield githubClient.request(`GET /repos/${repoOwner}/${repoName}/pulls/${prNumber}`);
             const branchNameBase = pullRequest === null || pullRequest === void 0 ? void 0 : pullRequest.base.ref;
             const branchNameHead = pullRequest === null || pullRequest === void 0 ? void 0 : pullRequest.head.ref;
