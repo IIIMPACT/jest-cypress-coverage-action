@@ -5949,11 +5949,8 @@ function main() {
             const githubClient = github.getOctokit(githubToken);
             const prNumber = core.getInput('prNumber', { required: true });
             const { data: pullRequest } = yield githubClient.request(`GET /repos/${repoOwner}/${repoName}/pulls/${prNumber}`);
-            console.log('pullRequest', pullRequest);
             const branchNameBase = pullRequest === null || pullRequest === void 0 ? void 0 : pullRequest.base.ref;
             const branchNameHead = pullRequest === null || pullRequest === void 0 ? void 0 : pullRequest.head.ref;
-            console.log('branchNameBase', branchNameBase);
-            console.log('branchNameHead', branchNameHead);
             let cypressError = null;
             let cypressReport = '';
             // 1. Get the full code coverage of new branch (jest and cypress merged)

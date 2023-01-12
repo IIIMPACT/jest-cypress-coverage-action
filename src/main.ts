@@ -30,13 +30,8 @@ async function main(): Promise<void> {
       `GET /repos/${repoOwner}/${repoName}/pulls/${prNumber}`
     )
 
-    console.log('pullRequest', pullRequest)
-
     const branchNameBase = pullRequest?.base.ref
     const branchNameHead = pullRequest?.head.ref
-
-    console.log('branchNameBase', branchNameBase)
-    console.log('branchNameHead', branchNameHead)
 
     let cypressError = null
     let cypressReport = ''
