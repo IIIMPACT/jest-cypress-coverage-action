@@ -28,7 +28,7 @@ async function main(): Promise<void> {
     const branchNameBase = github.context.payload.pull_request?.base.ref
     const branchNameHead = github.context.payload.pull_request?.head.ref
 
-    console.log('github.context', github.context)
+    console.log('github', github)
 
     let cypressError = null
     let cypressReport = ''
