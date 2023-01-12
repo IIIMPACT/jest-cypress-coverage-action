@@ -28,9 +28,7 @@ async function main(): Promise<void> {
     const branchNameBase = github.context.payload.pull_request?.base.ref
     const branchNameHead = github.context.payload.pull_request?.head.ref
 
-    console.log('github.context', github.context)
-    console.log('repoName', repoName)
-    console.log('repoOwner', repoOwner)
+    console.log('github.context.payload', github.context.payload)
     console.log('prNumber', prNumber)
 
     // const {data: pullRequest} = await githubClient.request(

@@ -5951,9 +5951,7 @@ function main() {
             const prNumber = github.context.issue.number;
             const branchNameBase = (_a = github.context.payload.pull_request) === null || _a === void 0 ? void 0 : _a.base.ref;
             const branchNameHead = (_b = github.context.payload.pull_request) === null || _b === void 0 ? void 0 : _b.head.ref;
-            console.log('github.context', github.context);
-            console.log('repoName', repoName);
-            console.log('repoOwner', repoOwner);
+            console.log('github.context.payload', github.context.payload);
             console.log('prNumber', prNumber);
             // const {data: pullRequest} = await githubClient.request(
             //   `GET /repos/${repoOwner}/${repoName}/pulls/{pull_number}`,
