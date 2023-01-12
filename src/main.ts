@@ -28,18 +28,13 @@ async function main(): Promise<void> {
     const branchNameBase = github.context.payload.pull_request?.base.ref
     const branchNameHead = github.context.payload.pull_request?.head.ref
 
-    console.log('githubClient', githubClient)
+    console.log('prNumber', prNumber)
 
-    // const {data: pullRequest} = await github.rest.pulls.get({
-    //   owner: 'octokit',
-    //   repo: 'rest.js',
-    //   pull_number: 123,
-    //   mediaType: {
-    //     format: 'diff'
-    //   }
-    // })
+    const {data: pullRequest} = await githubClient.rest.pulls.get({
+      pull_number: prNumber
+    })
 
-    // console.log(pullRequest)
+    console.log('pullRequest', pullRequest)
 
     let cypressError = null
     let cypressReport = ''

@@ -5951,16 +5951,11 @@ function main() {
             const prNumber = github.context.issue.number;
             const branchNameBase = (_a = github.context.payload.pull_request) === null || _a === void 0 ? void 0 : _a.base.ref;
             const branchNameHead = (_b = github.context.payload.pull_request) === null || _b === void 0 ? void 0 : _b.head.ref;
-            console.log('githubClient', githubClient);
-            // const {data: pullRequest} = await github.rest.pulls.get({
-            //   owner: 'octokit',
-            //   repo: 'rest.js',
-            //   pull_number: 123,
-            //   mediaType: {
-            //     format: 'diff'
-            //   }
-            // })
-            // console.log(pullRequest)
+            console.log('prNumber', prNumber);
+            const { data: pullRequest } = yield githubClient.rest.pulls.get({
+                pull_number: prNumber
+            });
+            console.log('pullRequest', pullRequest);
             let cypressError = null;
             let cypressReport = '';
             // 1. Get the full code coverage of new branch (jest and cypress merged)
