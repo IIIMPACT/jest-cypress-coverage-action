@@ -28,7 +28,18 @@ async function main(): Promise<void> {
     const branchNameBase = github.context.payload.pull_request?.base.ref
     const branchNameHead = github.context.payload.pull_request?.head.ref
 
-    console.log('github', github)
+    console.log('githubClient', githubClient)
+
+    // const {data: pullRequest} = await github.rest.pulls.get({
+    //   owner: 'octokit',
+    //   repo: 'rest.js',
+    //   pull_number: 123,
+    //   mediaType: {
+    //     format: 'diff'
+    //   }
+    // })
+
+    // console.log(pullRequest)
 
     let cypressError = null
     let cypressReport = ''
