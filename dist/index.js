@@ -5951,9 +5951,11 @@ function main() {
             const prNumber = github.context.issue.number;
             const branchNameBase = (_a = github.context.payload.pull_request) === null || _a === void 0 ? void 0 : _a.base.ref;
             const branchNameHead = (_b = github.context.payload.pull_request) === null || _b === void 0 ? void 0 : _b.head.ref;
-            console.log('github.context', github.context);
+            console.log('githubClient', githubClient);
             const { data: pullRequest } = yield githubClient.rest.pulls.get({
-                repo: repoName
+                owner: repoOwner,
+                repo: repoName,
+                pull_number: 298
             });
             console.log('pullRequest', pullRequest);
             let cypressError = null;
