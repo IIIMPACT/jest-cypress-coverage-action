@@ -5935,7 +5935,6 @@ const fs = __webpack_require__(747);
 const DiffChecker = __webpack_require__(458)/* .DiffChecker */ .p;
 const ThresholdChecker = __webpack_require__(921)/* .ThresholdChecker */ .C;
 function main() {
-    var _a, _b;
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const repoName = github.context.repo.repo;
@@ -5949,14 +5948,12 @@ function main() {
             }) === 'true';
             const githubClient = github.getOctokit(githubToken);
             const prNumber = core.getInput('prNumber', { required: true });
-            const branchNameBase = (_a = github.context.payload.pull_request) === null || _a === void 0 ? void 0 : _a.base.ref;
-            const branchNameHead = (_b = github.context.payload.pull_request) === null || _b === void 0 ? void 0 : _b.head.ref;
-            const { data: pullRequest } = yield githubClient.request(`GET /repos/${repoOwner}/${repoName}/pulls/${prNumber}`, {
-                owner: 'OWNER',
-                repo: 'REPO',
-                pull_number: 'PULL_NUMBER'
-            });
+            const { data: pullRequest } = yield githubClient.request(`GET /repos/${repoOwner}/${repoName}/pulls/${prNumber}`);
             console.log('pullRequest', pullRequest);
+            const branchNameBase = pullRequest === null || pullRequest === void 0 ? void 0 : pullRequest.base.ref;
+            const branchNameHead = pullRequest === null || pullRequest === void 0 ? void 0 : pullRequest.head.ref;
+            console.log('branchNameBase', branchNameBase);
+            console.log('branchNameHead', branchNameHead);
             let cypressError = null;
             let cypressReport = '';
             // 1. Get the full code coverage of new branch (jest and cypress merged)
