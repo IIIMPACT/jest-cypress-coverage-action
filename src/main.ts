@@ -13,6 +13,7 @@ async function main(): Promise<void> {
   try {
     const repoName = github.context.repo.repo
     const repoOwner = github.context.repo.owner
+    const prNumber = core.getInput('prNumber', {required: true})
     const githubToken = core.getInput('accessToken', {required: true})
     const prCoverageThreshold = JSON.parse(
       core.getInput('prCoverageThreshold', {
@@ -24,7 +25,6 @@ async function main(): Promise<void> {
         required: true
       }) === 'true'
     const githubClient = github.getOctokit(githubToken)
-    const prNumber = core.getInput('prNumber', {required: true})
 
     const {data: pullRequest} = await githubClient.request(
       `GET /repos/${repoOwner}/${repoName}/pulls/${prNumber}`

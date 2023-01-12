@@ -26,5 +26,5 @@ outputs:
   passed: # id of output
     description: "Did the coverage pass or fail"
 runs:
-  using: "node12"
+  using: "node16"
   main: "dist/index.js"

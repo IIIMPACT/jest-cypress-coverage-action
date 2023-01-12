@@ -5939,6 +5939,7 @@ function main() {
         try {
             const repoName = github.context.repo.repo;
             const repoOwner = github.context.repo.owner;
+            const prNumber = core.getInput('prNumber', { required: true });
             const githubToken = core.getInput('accessToken', { required: true });
             const prCoverageThreshold = JSON.parse(core.getInput('prCoverageThreshold', {
                 required: true
@@ -5947,7 +5948,6 @@ function main() {
                 required: true
             }) === 'true';
             const githubClient = github.getOctokit(githubToken);
-            const prNumber = core.getInput('prNumber', { required: true });
             const { data: pullRequest } = yield githubClient.request(`GET /repos/${repoOwner}/${repoName}/pulls/${prNumber}`);
             const branchNameBase = pullRequest === null || pullRequest === void 0 ? void 0 : pullRequest.base.ref;
             const branchNameHead = pullRequest === null || pullRequest === void 0 ? void 0 : pullRequest.head.ref;
