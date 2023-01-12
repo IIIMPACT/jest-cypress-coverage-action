@@ -5952,10 +5952,8 @@ function main() {
             const branchNameBase = (_a = github.context.payload.pull_request) === null || _a === void 0 ? void 0 : _a.base.ref;
             const branchNameHead = (_b = github.context.payload.pull_request) === null || _b === void 0 ? void 0 : _b.head.ref;
             console.log('github.context', github.context);
-            // const {data: pullRequest} = await githubClient.rest.pulls.get({
-            //   pull_number: prNumber
-            // })
-            // console.log('pullRequest', pullRequest)
+            const { data: pullRequest } = yield githubClient.rest.pulls.get();
+            console.log('pullRequest', pullRequest);
             let cypressError = null;
             let cypressReport = '';
             // 1. Get the full code coverage of new branch (jest and cypress merged)
