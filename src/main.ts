@@ -24,23 +24,20 @@ async function main(): Promise<void> {
         required: true
       }) === 'true'
     const githubClient = github.getOctokit(githubToken)
-    // const prNumber = github.context.issue.number
     const prNumber = core.getInput('prNumber', {required: true})
     const branchNameBase = github.context.payload.pull_request?.base.ref
     const branchNameHead = github.context.payload.pull_request?.head.ref
 
-    console.log('prNumber', prNumber)
+    const {data: pullRequest} = await githubClient.request(
+      `GET /repos/${repoOwner}/${repoName}/pulls/${prNumber}`,
+      {
+        owner: 'OWNER',
+        repo: 'REPO',
+        pull_number: 'PULL_NUMBER'
+      }
+    )
 
-    // const {data: pullRequest} = await githubClient.request(
-    //   `GET /repos/${repoOwner}/${repoName}/pulls/{pull_number}`,
-    //   {
-    //     owner: 'OWNER',
-    //     repo: 'REPO',
-    //     pull_number: 'PULL_NUMBER'
-    //   }
-    // )
-
-    // console.log('pullRequest', pullRequest)
+    console.log('pullRequest', pullRequest)
 
     let cypressError = null
     let cypressReport = ''

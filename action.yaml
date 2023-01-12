@@ -18,6 +18,10 @@ inputs:
     description: 'check if the message is already there and replace that message or create a new message each time'
     required: false
     default: false
+  prNumber:
+    description: 'the pr number'
+    required: false
+    default: ${{ github.event.pull_request.number }}
 outputs:
   passed: # id of output
     description: "Did the coverage pass or fail"

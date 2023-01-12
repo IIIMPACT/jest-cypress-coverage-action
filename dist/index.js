@@ -5948,20 +5948,15 @@ function main() {
                 required: true
             }) === 'true';
             const githubClient = github.getOctokit(githubToken);
-            // const prNumber = github.context.issue.number
             const prNumber = core.getInput('prNumber', { required: true });
             const branchNameBase = (_a = github.context.payload.pull_request) === null || _a === void 0 ? void 0 : _a.base.ref;
             const branchNameHead = (_b = github.context.payload.pull_request) === null || _b === void 0 ? void 0 : _b.head.ref;
-            console.log('prNumber', prNumber);
-            // const {data: pullRequest} = await githubClient.request(
-            //   `GET /repos/${repoOwner}/${repoName}/pulls/{pull_number}`,
-            //   {
-            //     owner: 'OWNER',
-            //     repo: 'REPO',
-            //     pull_number: 'PULL_NUMBER'
-            //   }
-            // )
-            // console.log('pullRequest', pullRequest)
+            const { data: pullRequest } = yield githubClient.request(`GET /repos/${repoOwner}/${repoName}/pulls/${prNumber}`, {
+                owner: 'OWNER',
+                repo: 'REPO',
+                pull_number: 'PULL_NUMBER'
+            });
+            console.log('pullRequest', pullRequest);
             let cypressError = null;
             let cypressReport = '';
             // 1. Get the full code coverage of new branch (jest and cypress merged)
