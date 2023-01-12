@@ -26,9 +26,6 @@ async function main(): Promise<void> {
       }) === 'true'
     const githubClient = github.getOctokit(githubToken)
 
-    console.log('githubToken', githubToken)
-    console.log('prNumber', prNumber)
-
     const {data: pullRequest} = await githubClient.request(
       `GET /repos/${repoOwner}/${repoName}/pulls/${prNumber}`
     )
